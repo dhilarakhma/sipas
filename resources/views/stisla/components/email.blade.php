@@ -1,0 +1,1 @@
+@input(['type'=>'email', 'id'=>$id ?? 'email', 'label'=>$label ?? 'Email', 'ikon'=>$ikon ?? 'fas fa-envelope'])

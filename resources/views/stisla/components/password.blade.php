@@ -1,0 +1,1 @@
+@input(['type'=>'password', 'id'=>$id ?? 'password', 'label'=>$label ?? 'Password', 'ikon'=>$ikon ?? 'fas fa-key', 'ikon2'=>'fas fa-eye'])

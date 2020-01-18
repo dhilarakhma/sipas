@@ -1,0 +1,1 @@
+@input(['type'=>'file', 'accept'=>'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel', 'ikon'=>'fas fa-file-excel'])
