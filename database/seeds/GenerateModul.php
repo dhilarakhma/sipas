@@ -35,6 +35,30 @@ class GenerateModul extends Seeder
         ]);
         Modul::create([
         	'id'		=> $i++,
+            'nama'		=> 'surat_masuk',
+            'label'     => 'Surat Masuk',
+        	'ikon'		=> 'fa fa-envelope-open',
+        ]);
+        Modul::create([
+        	'id'		=> $i++,
+            'nama'		=> 'surat_keluar',
+            'label'     => 'Surat Keluar',
+        	'ikon'		=> 'fa fa-envelope',
+        ]);
+        Modul::create([
+        	'id'		=> $i++,
+            'nama'		=> 'pegawai',
+            'label'     => 'Pegawai',
+        	'ikon'		=> 'fa fa-user-friends',
+        ]);
+        Modul::create([
+        	'id'		=> $i++,
+            'nama'		=> 'organisasi',
+            'label'     => 'Organisasi',
+        	'ikon'		=> 'fa fa-users',
+        ]);
+        Modul::create([
+        	'id'		=> $i++,
             'nama'		=> 'pengaturan',
             'label'     => 'Pengaturan',
         	'ikon'		=> 'fa fa-cogs',

@@ -9,7 +9,7 @@ class Menu extends Model
     protected $table = 'menu';
 
     protected $fillable = [
-    	'ikon', 'route', 'parent_id', 'nama', 'is_blank',
+    	'ikon', 'route', 'parent_id', 'nama', 'is_blank', 'url',
     ];
 
     public $timestamps = false;

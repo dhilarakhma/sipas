@@ -23,9 +23,27 @@ class GenerateMenu extends Seeder
         ]);
         Menu::create([
         	'id'		=> $i++,
-        	'nama'		=> 'Contoh',
-        	'ikon'		=> 'fas fa-atom',
-        	'route'		=> 'contoh.index',
+        	'nama'		=> 'Surat Masuk',
+        	'ikon'		=> 'fas fa-envelope-open',
+        	'url'		=> 'arsip/surat_masuk',
+        ]);
+        Menu::create([
+        	'id'		=> $i++,
+        	'nama'		=> 'Surat Keluar',
+        	'ikon'		=> 'fas fa-envelope',
+        	'url'		=> 'arsip/surat_keluar',
+        ]);
+        Menu::create([
+        	'id'		=> $i++,
+        	'nama'		=> 'Pegawai',
+        	'ikon'		=> 'fas fa-user-friends',
+        	'url'		=> 'arsip/pegawai',
+        ]);
+        Menu::create([
+        	'id'		=> $i++,
+        	'nama'		=> 'Organisasi',
+        	'ikon'		=> 'fas fa-users',
+        	'url'		=> 'arsip/organisasi',
         ]);
         Menu::create([
         	'id'		=> $i++,

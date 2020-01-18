@@ -23,7 +23,7 @@ class GeneratePengaturan extends Seeder
         ]);
         Pengaturan::create([
             'key'       => 'nama_perusahaan',
-            'value'     => 'PT Anam Maju Pantang Mundur',
+            'value'     => 'KSPSS NURURROHMAH AL BAROKAH',
             'ikon'      => 'fas fa-building',
             'label'     => 'Nama Perusahaan',
         ]);
@@ -63,7 +63,7 @@ class GeneratePengaturan extends Seeder
         // meta
         Pengaturan::create([
             'key'               => 'meta_description',
-            'value'             => 'PT Anam Maju Pantang Mundur',
+            'value'             => 'KSPSS NURURROHMAH AL BAROKAH',
             'ikon'              => 'fas fa-globe',
             'label'             => 'Meta Description',
             'grup_label'        => 'Pengaturan Meta',
@@ -71,7 +71,7 @@ class GeneratePengaturan extends Seeder
         ]);
         Pengaturan::create([
             'key'               => 'meta_keywords',
-            'value'             => 'Sistem Informasi, Pemrograman, Github, PHP, Laravel, Stisla, Heroku',
+            'value'             => 'Sistem Informasi, Pemrograman, Github, PHP, Laravel, Stisla, Heroku, Koperasi, Nururrohmah',
             'ikon'              => 'fas fa-globe',
             'label'             => 'Meta Keywords',
             'grup_label'        => 'Pengaturan Meta',

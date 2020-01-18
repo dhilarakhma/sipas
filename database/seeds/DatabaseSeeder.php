@@ -16,5 +16,6 @@ class DatabaseSeeder extends Seeder
         $this->call(GenerateModul::class);
         $this->call(GeneratePengaturan::class);
         $this->call(ContohSeeder::class);
+        $this->call(JenisDokumenSeeder::class);
     }
 }
