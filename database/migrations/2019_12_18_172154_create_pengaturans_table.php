@@ -22,6 +22,7 @@ class CreatePengaturansTable extends Migration
             $table->string('grup_label')->default('Pengaturan Umum');
             $table->string('ikon')->default('fas fa-cog');
             $table->string('label')->default('Pengaturan apa hayo');
+            $table->text('pilihan')->nullable();
         });
     }
 

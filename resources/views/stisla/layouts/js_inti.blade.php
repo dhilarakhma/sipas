@@ -1,6 +1,6 @@
 @stack('modal')
 
-<form action="" type="submit" id="form-hapus">
+<form method="POST" action="" type="submit" id="form-hapus">
     @method('DELETE')
     @csrf
 </form>
@@ -41,8 +41,20 @@ integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07j
 @if(session('success_msg'))
 <script>
 
-    swal('Sukses', '{{ session('success_msg ') }}', 'success');
+    swal('Sukses', '{{ session('success_msg') }}', 'success');
     
 </script>
 @endif
 @stack('script')
+
+@if(\App\Models\Pengaturan::where('key', 'sidebar_mini')->first()->value == 'true')
+<script>
+    $(document).ready(function(){
+        if($(window).outerWidth() > 768){
+            setTimeout(function(){
+                $('[data-toggle="sidebar"]').trigger('click');
+            }, 1000);
+        }
+    });
+</script>
+@endif

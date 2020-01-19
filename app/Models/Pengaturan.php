@@ -9,9 +9,13 @@ class Pengaturan extends Model
     protected $table = 'pengaturan';
 
     protected $fillable = [
-    	'key', 'value', 'form_type', 'grup', 'grup_label',
+    	'key', 'value', 'form_type', 'grup', 'grup_label', 'pilihan',
     ];
 
     public $timestamps = false;
+
+    protected $casts = [
+        'pilihan'   => 'array',
+    ];
 
 }

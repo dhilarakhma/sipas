@@ -12,10 +12,21 @@
     </div>
     <ul class="sidebar-menu">
       @foreach (\App\Models\Menu::with('sub')->whereNull('parent_id')->get() as $menu)
+      @if($loop->iteration == 2)
+      <li class="menu-header">Arsip</li>
+      @endif
+      @if($loop->iteration == 6)
+      <li class="menu-header">Lainnya</li>
+      @endif
+      @if($loop->iteration == 1)
+      <li class="menu-header">Dashboard</li>
+      @endif
       @if($menu->sub->count() <= 0)
-      <li @if($active == $menu->route) class="active" @endif>
+      @if(in_array(Auth::user()->role, $menu->roles))
+      <li @if($active == $menu->route || $active == $menu->url) class="active" @endif>
         <a @if($menu->is_blank) target="_blank" @endif class="nav-link" href="{{ $menu->route ? route($menu->route) : url($menu->url)}}"><i class="{{$menu->ikon}}"></i> <span>{{$menu->nama}}</span></a>
       </li>
+      @endif
       @else
       <li class="nav-item dropdown @if(in_array($active, $menu->sub->pluck('route')->toArray())) active @endif">
         <a href="#" class="nav-link has-dropdown"><i class="{{$menu->ikon}}"></i> <span>{{$menu->nama}}</span></a>

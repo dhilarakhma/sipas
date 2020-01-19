@@ -16,7 +16,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'nama', 'email', 'password', 'avatar',
+        'nama', 'email', 'password', 'avatar', 'role'
     ];
 
     /**
@@ -37,4 +37,9 @@ class User extends Authenticatable
     ];
 
     public $timestamps = false;
+
+    public function kantor()
+    {
+        return $this->hasOne('App\Kantor', 'user_id');
+    }
 }

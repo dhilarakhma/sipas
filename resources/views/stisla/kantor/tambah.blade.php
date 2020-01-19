@@ -1,7 +1,3 @@
-@php
-    $modul = \App\Models\Modul::where('nama', $jenis_dokumen)->first();
-    $title = $modul->label.' Baru';
-@endphp
 @extends('stisla.layouts.form')
 
 @section('konten')
@@ -9,7 +5,7 @@
     <h1> <i class="{{$modul->ikon}}"></i> {{ $title }}</h1>
     <div class="section-header-breadcrumb">
         <div class="breadcrumb-item active"><a href="{{ route('dashboard') }}">{{label_dashboard()}}</a></div>
-        <div class="breadcrumb-item"><a href="{{ route('arsip', [$jenis_dokumen]) }}">{{ $modul->label }}</a></div>
+        <div class="breadcrumb-item"><a href="{{ route('kantor.index') }}">{{ $modul->label }}</a></div>
         <div class="breadcrumb-item">{{ $title }}</div>
     </div>
 </div>
@@ -30,33 +26,19 @@
                         <div class="row">
 
                             <div class="col-md-6">
-                                @input(['id'=>'no_surat', 'value'=>isset($d)?$d->no_surat : '', 'ikon'=>'fas fa-envelope'])
+                                @input(['id'=>'kantor', 'value'=>isset($d)?$d->nama : '', 'ikon'=>$modul->ikon])
                             </div>
 
                             <div class="col-md-6">
-                                @datepicker(['id'=>'tanggal', 'value'=>isset($d)?$d->tanggal : date('Y-m-d')])
+                                @input(['id'=>'nama_admin', 'value'=>isset($d)?$d->user->nama : '', 'ikon'=>'fas fa-user'])
                             </div>
 
-                            @if($jenis_dokumen == 'surat_keluar')
                             <div class="col-md-6">
-                                @input(['id'=>'penerima', 'value'=>isset($d)?$d->penerima : '', 'ikon'=>'fas fa-user'])
+                                @email(['value'=>isset($d)?$d->user->email : ''])
                             </div>
-                            @endif
-
-                            @if($jenis_dokumen == 'surat_masuk')
-                            <div class="col-md-6">
-                                @input(['id'=>'pengirim', 'ikon'=>'fas fa-user'])
-                            </div>
-                            @endif
-
-                            @if($jenis_dokumen == 'pegawai')
-                            <div class="col-md-6">
-                                @input(['id'=>'pegawai', 'value'=>isset($d)?$d->pegawai : '', 'ikon'=>'fas fa-user'])
-                            </div>
-                            @endif
 
                             <div class="col-md-6">
-                                @file(['id'=>'berkas', 'ikon'=>'fas fa-file'])
+                                @password(['required'=>isset($d)?false:true])
                             </div>
 
                             @if($action)

@@ -17,5 +17,6 @@ class DatabaseSeeder extends Seeder
         $this->call(GeneratePengaturan::class);
         $this->call(ContohSeeder::class);
         $this->call(JenisDokumenSeeder::class);
+        $this->call(KantorSeeder::class);
     }
 }

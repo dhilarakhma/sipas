@@ -16,6 +16,9 @@ class Arsip extends Model
         'penerima',
         'tanggal',
         'berkas',
+        'nama_berkas',
+        'ekstensi_berkas',
+        'kantor_id',
     ];
     
 }

@@ -73,6 +73,9 @@ $(document).ready(function () {
             autoUpdateInput: false, //disable default date
             singleDatePicker: true,
             showDropdowns: true,
+            locale: {
+                format: 'YYYY-MM-DD'
+            }
         });
 
         $('.datepicker').on('apply.daterangepicker', function (ev, picker) {
@@ -113,4 +116,9 @@ function hapus(e, action_url) {
                 swal('Okay, tidak jadi');
             }
         });
+}
+
+// set width nama perusahaan
+if($(window).outerWidth() == 768){
+    $('.navbar').find('.w-50').removeClass('w-50').addClass('w-75');
 }

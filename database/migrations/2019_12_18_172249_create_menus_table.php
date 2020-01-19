@@ -22,6 +22,7 @@ class CreateMenusTable extends Migration
             $table->string('is_blank')->nullable();
             $table->tinyInteger('parent_id')->nullable()->unsigned();
             $table->foreign('parent_id')->on('menu')->references('id')->onUpdate('cascade')->onDelete('cascade');
+            $table->string('roles');
         });
     }
 

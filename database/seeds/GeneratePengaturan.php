@@ -60,6 +60,16 @@ class GeneratePengaturan extends Seeder
             'label'     => 'Background Masuk',
             'form_type' => 'image',
         ]);
+        Pengaturan::create([
+            'key'       => 'sidebar_mini',
+            'value'     => 'true',
+            'label'     => 'Sidebar Mini',
+            'form_type' => 'select2',
+            'pilihan'   => [
+                'true' => 'true',
+                'false' => 'false',
+            ]
+        ]);
         // meta
         Pengaturan::create([
             'key'               => 'meta_description',

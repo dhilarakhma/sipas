@@ -22,6 +22,8 @@ class CreateArsipsTable extends Migration
             $table->string('penerima')->nullable();
             $table->date('tanggal')->nullable();
             $table->string('berkas');
+            $table->string('nama_berkas');
+            $table->string('ekstensi_berkas');
             $table->timestamps();
         });
     }

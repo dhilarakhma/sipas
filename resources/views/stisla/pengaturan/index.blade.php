@@ -32,8 +32,8 @@
               <div class="col-md-6">
                 @if($d->form_type == 'image')
                 @gambar(['id'=>$d->key, 'label'=>$d->label, 'ikon'=>$d->ikon, 'value'=>$d->value, 'required'=>false])
-                @elseif($d->key == 'sidebar_mini')
-                @select(['id'=>$d->key, 'label'=>$d->label, 'value'=>$d->ikon, 'selectData'=>['true'=>'true','false'=>'false']])
+                @elseif($d->form_type == "select2")
+                @select2(['id'=>$d->key, 'label'=>$d->label, 'value'=>$d->value, 'select_data'=>$d->pilihan])
                 @else
                 @input(['id'=>$d->key, 'label'=>$d->label, 'ikon'=>$d->ikon, 'value'=>$d->value])
                 @endif

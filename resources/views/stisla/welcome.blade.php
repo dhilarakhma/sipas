@@ -76,6 +76,7 @@
                             <h3>
                                 {{ $_logo = \App\Models\Pengaturan::where('key', 'nama_perusahaan')->first()->value }}
                             </h3>
+                            {{ config('stisla.deskripsi_aplikasi') }}
                             <div class="d-flex align-items-center">
                                 <a id="play-home-video" class="video-play-button" href="{{ route('dashboard') }}">
                                     <span></span>

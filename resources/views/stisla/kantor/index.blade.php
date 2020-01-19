@@ -1,5 +1,5 @@
 @php
-    $modul = \App\Models\Modul::where('nama', $jenis_dokumen)->first();
+    $modul = \App\Models\Modul::where('nama', 'kantor')->first();
     $title = $modul->label;
 @endphp
 @extends('stisla.layouts.table')
@@ -19,11 +19,9 @@
             <div class="card">
                 <div class="card-header">
                     <h4> <i class="{{$modul->ikon}}"></i> {{ $title }} </h4>
-                    @if(Auth::user()->role == 'admin')
                     &nbsp; &nbsp; &nbsp;
                     <a href="{{ $action_tambah }}" class="btn btn-primary float-right"> <i class="fas fa-plus"></i> Baru
                     </a>
-                    @endif
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
@@ -31,46 +29,19 @@
                             <thead>
                                 <tr>
                                     <th>#</th>
-                                    <th>No Surat</th>
-                                    <th>Tanggal</th>
-                                    @if($jenis_dokumen == 'surat_keluar')
-                                    <th>Penerima</th>
-                                    @endif
-                                    @if($jenis_dokumen == 'surat_masuk')
-                                    <th>Pengirim</th>
-                                    @endif
-                                    @if($jenis_dokumen == 'pegawai')
-                                    <th>Pegawai</th>
-                                    @endif
-                                    <th>Berkas</th>
-                                    @if(Auth::user()->role == 'admin')
+                                    <th>Kantor</th>
+                                    <th>Nama Admin</th>
+                                    <th>Email</th>
                                     <th>Aksi</th>
-                                    @endif
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach ($data as $d)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $d->no_surat }}</td>
-                                    <td>{{ $d->tanggal }}</td>
-                                    @if($jenis_dokumen == 'surat_keluar')
-                                    <td>{{ $d->penerima }}</td>
-                                    @endif
-                                    @if($jenis_dokumen == 'surat_masuk')
-                                    <td>{{ $d->pengirim }}</td>
-                                    @endif
-                                    @if($jenis_dokumen == 'pegawai')
-                                    <td>{{ $d->pegawai }}</td>
-                                    @endif
-                                    <td>
-                                        @if($d->berkas)
-                                        <a href="{{ route('arsip.unduh', [$jenis_dokumen, $d->id]) }}" target="_blank">unduh</a>
-                                        @else
-                                        -
-                                        @endif
-                                    </td>
-                                    @if(Auth::user()->role == 'admin')
+                                    <td>{{ $d->nama }}</td>
+                                    <td>{{ $d->user->nama }}</td>
+                                    <td>{{ $d->user->email }}</td>
                                     <td>
                                         <button class="btn btn-primary dropdown-toggle" type="button"
                                             id="dropdownMenuButton{{$loop->iteration}}" data-toggle="dropdown"
@@ -78,16 +49,15 @@
                                             Aksi
                                         </button>
                                         <div class="dropdown-menu">
-                                            <a class="dropdown-item has-icon" href="{{ route('contoh.edit', $d->id) }}">
+                                            <a class="dropdown-item has-icon" href="{{ route('kantor.edit', $d->id) }}">
                                                 <i class="fas fa-edit"></i> Ubah
                                             </a>
-                                            <a onclick="hapus(event, '{{ route('contoh.destroy', $d->id) }}')"
+                                            <a onclick="hapus(event, '{{ route('kantor.destroy', $d->id) }}')"
                                                 class="dropdown-item has-icon" href="#">
                                                 <i class="fas fa-trash"></i> Hapus
                                             </a>
                                         </div>
                                     </td>
-                                    @endif
                                 </tr>
                                 @endforeach
                             </tbody>

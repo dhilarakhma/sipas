@@ -14,6 +14,21 @@ footer span {
     margin-right: 10px;
 }
 
+@media screen and (max-width: 768px){
+
+    .navbar-nav .w-50 {
+        width: 75% !important;
+    }
+    
+    .logoku {
+        margin-left: -10px;
+        max-height: 30px;
+        position: absolute;
+        max-width: 30px;
+    }
+
+}
+
 @media screen and (max-width: 425px){
 
     .nama_perusahaan {

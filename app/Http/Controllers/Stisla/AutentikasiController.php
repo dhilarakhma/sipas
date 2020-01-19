@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Stisla;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\User;
+use App\Models\Pengaturan;
 
 class AutentikasiController extends Controller
 {
@@ -81,7 +82,7 @@ class AutentikasiController extends Controller
 			$user->avatar = asset(\Storage::url($request->file('avatar')->store('public/avatar')));
 		}
 		if($request->filled('password'))
-			$user->password = $request->password;
+			$user->password = bcrypt($request->password);
 		$user->save();
 		return redirect()->back()->with('success_msg', 'Profil berhasil diperbarui');
 	}
@@ -101,13 +102,14 @@ class AutentikasiController extends Controller
 	{
 		$pengaturan = Pengaturan::all();
 		$rules = $pengaturan->each(function($item){
-			if($form_type == 'image')
+			if($item->form_type == 'image')
 				$item->rule = 'nullable|file|mimes:jpeg,png';
 			else
 				$item->rule = 'required';
 			return $item;
 		})->pluck('rule', 'key')->toArray();
 		$request->validate($rules);
+		$pengaturan = Pengaturan::all();
 		foreach ($pengaturan as $p) {
 			if($p->form_type == 'image'){
 				if($request->file($p->key)){

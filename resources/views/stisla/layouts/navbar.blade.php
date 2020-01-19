@@ -205,7 +205,7 @@
     </li> --}}
         <li class="dropdown"><a href="#" data-toggle="dropdown"
                 class="nav-link dropdown-toggle nav-link-lg nav-link-user">
-                <img alt="{{ Auth::user()->nama }}" src="{{ asset('stisla/assets/img/avatar/avatar-1.png') }}"
+                <img alt="{{ Auth::user()->nama }}" src="{{ Auth::user()->avatar }}"
                     class="rounded-circle mr-1">
                 <div class="d-sm-none d-lg-inline-block">Hai, {{ Auth::user()->nama }}</div>
             </a>

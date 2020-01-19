@@ -8,4 +8,5 @@ return [
     'nama_developer'            => env('STISLA_NAMA_DEVELOPER', 'Hairul Anam'),
     'whatsapp_developer'        => env('STISLA_WHATSAPP_DEVELOPER', '6285322778935'),
     'github_developer'          => env('STISLA_GITHUB_DEVELOPER', 'Anamcoollzz'),
+    'deskripsi_aplikasi'        => env('STISLA_DESKRIPSI_APLIKASI', 'Anam Code merupakan aplikasi yang bisa anda gunakan untuk mengelola arsip dan dokumen seperti surat masuk, surat keluar, arsip pegawai dan arsip organisasi. Menu yang ditampilkan berdasarkan kantor atau cabang masing-masing')
 ];
