@@ -20,7 +20,7 @@ class KantorSeeder extends Seeder
             'nama'			=> 'ADMIN KANTOR PUSAT',
             'email'			=> 'kantor_pusat@nururrohmah.com',
             'password'		=> bcrypt('12345'),
-            'avatar'        => asset('assets/img/avatar/avatar-1.png'),
+            'avatar'        => asset('stisla/assets/img/avatar/avatar-1.png'),
             'role'          => 'admin'
         ];
         $user = \App\User::updateOrCreate([
@@ -34,7 +34,7 @@ class KantorSeeder extends Seeder
             'nama'			=> 'ADMIN CABANG UTAMA',
             'email'			=> 'cabang_utama@nururrohmah.com',
             'password'		=> bcrypt('12345'),
-            'avatar'        => asset('assets/img/avatar/avatar-1.png'),
+            'avatar'        => asset('stisla/assets/img/avatar/avatar-1.png'),
             'role'          => 'admin'
         ];
         $user = \App\User::updateOrCreate([
@@ -48,7 +48,7 @@ class KantorSeeder extends Seeder
             'nama'			=> 'ADMIN CABANG AYAH',
             'email'			=> 'cabang_ayah@nururrohmah.com',
             'password'		=> bcrypt('12345'),
-            'avatar'        => asset('assets/img/avatar/avatar-1.png'),
+            'avatar'        => asset('stisla/assets/img/avatar/avatar-1.png'),
             'role'          => 'admin'
         ];
         $user = \App\User::updateOrCreate([
