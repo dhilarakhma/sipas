@@ -19,6 +19,7 @@ class Arsip extends Model
         'nama_berkas',
         'ekstensi_berkas',
         'kantor_id',
+        'disk',
     ];
     
 }

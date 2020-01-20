@@ -76,10 +76,11 @@ class ArsipController extends Controller
 			'pengirim'			=> $request->pengirim,
 			'penerima'			=> $request->penerima,
 			'tanggal'			=> $request->tanggal,
-			'berkas'			=> $request->file('berkas')->store(\Auth::user()->email.'/'.$jenis_dokumen, 'dropbox'),
+			'berkas'			=> $request->file('berkas')->store(\Auth::user()->email.'/'.$jenis_dokumen, config('dropbox.active')),
 			'nama_berkas'		=> $nama_berkas,
 			'ekstensi_berkas'	=> $ektensi_berkas,
 			'kantor_id'			=> \Auth::user()->kantor->id,
+			'disk'				=> config('dropbox.active'),
 		];
 
 		Arsip::create($data);
@@ -97,7 +98,7 @@ class ArsipController extends Controller
 		if($arsip->jenis_dokumen_id != $jd->id)
 			abort(404);
 		if($arsip->berkas)
-			return \Storage::disk('dropbox')->download($arsip->berkas, $arsip->nama_berkas);
+			return \Storage::disk(config('dropbox.active'))->download($arsip->berkas, $arsip->nama_berkas);
 		abort(404);
 	}
 

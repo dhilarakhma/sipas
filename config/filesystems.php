@@ -69,6 +69,16 @@ return [
             'authorization_token' => env('DROPBOX_TOKEN'),
         ],
 
+        'dropbox1' => [
+            'driver' => 'dropbox',
+            'authorization_token' => env('DROPBOX_TOKEN1'),
+        ],
+
+        'dropbox2' => [
+            'driver' => 'dropbox',
+            'authorization_token' => env('DROPBOX_TOKEN2'),
+        ],
+
     ],
 
 ];
