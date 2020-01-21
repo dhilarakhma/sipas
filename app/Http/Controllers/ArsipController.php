@@ -89,6 +89,7 @@ class ArsipController extends Controller
 			'penerima'			=> $request->penerima,
 			'tanggal'			=> $request->tanggal,
 			'kantor_id'			=> \Auth::user()->kantor->id,
+			'disk'				=> config('dropbox.active'),
 		];
 
 		$data = array_merge($data, $this->unggahBerkas($request, $jenis_dokumen));
@@ -113,7 +114,7 @@ class ArsipController extends Controller
 			}
 		}
 		if($arsip->berkas)
-			return \Storage::disk('dropbox')->download($arsip->berkas, $arsip->nama_berkas);
+			return \Storage::disk(config('dropbox.active'))->download($arsip->berkas, $arsip->nama_berkas);
 		abort(404);
 	}
 	
