@@ -17,6 +17,19 @@ class ArsipController extends Controller
 		$this->middleware(\App\Http\Middleware\HanyaAdmin::class)->except('index', 'unduh');
 	}
 
+	private function unggahBerkas(Request $request, String $jenis_dokumen)
+	{
+		$nama_berkas = $request->berkas->getClientOriginalName();
+		$berkas_array = explode('.', $nama_berkas);
+		$ekstensi_berkas = end($berkas_array);
+		$path = $request->file('berkas')->store(\Auth::user()->email.'/'.$jenis_dokumen.'/'.$request->tanggal.'/'.$nama_berkas, 'dropbox');
+		return [
+			'nama_berkas'			=> $nama_berkas,
+			'ekstensi_berkas'		=> $ekstensi_berkas,
+			'berkas'				=> $path,
+		];
+	}
+
 	public function index($jenis_dokumen)
 	{
 		$jd = \App\JenisDokumen::where('route', $jenis_dokumen)->first();
@@ -54,6 +67,7 @@ class ArsipController extends Controller
 			abort(404);
 		$rules = [
 			'no_surat'		=> 'required',
+			'judul_surat'	=> 'required',
 			'tanggal'		=> 'required',
 			'berkas'		=> 'required|file',
 		];
@@ -67,20 +81,17 @@ class ArsipController extends Controller
 			$rules['pegawai'] = 'required';
 		}
 		$request->validate($rules);
-		$nama_berkas = $request->berkas->getClientOriginalName();
-		$berkas_array = explode('.', $nama_berkas);
-		$ektensi_berkas = end($berkas_array);
 		$data = [
 			'no_surat'			=> $request->no_surat,
+			'judul_surat'		=> $request->judul_surat,
 			'jenis_dokumen_id'	=> $jd->id,
 			'pengirim'			=> $request->pengirim,
 			'penerima'			=> $request->penerima,
 			'tanggal'			=> $request->tanggal,
-			'berkas'			=> $request->file('berkas')->store(\Auth::user()->email.'/'.$jenis_dokumen, 'dropbox'),
-			'nama_berkas'		=> $nama_berkas,
-			'ekstensi_berkas'	=> $ektensi_berkas,
 			'kantor_id'			=> \Auth::user()->kantor->id,
 		];
+
+		$data = array_merge($data, $this->unggahBerkas($request, $jenis_dokumen));
 
 		Arsip::create($data);
 
@@ -96,70 +107,143 @@ class ArsipController extends Controller
 			abort(404);
 		if($arsip->jenis_dokumen_id != $jd->id)
 			abort(404);
+		if(\Auth::user()->role == 'admin'){
+			if(\Auth::user()->kantor->id != $arsip->kantor_id){
+				abort(404);
+			}
+		}
 		if($arsip->berkas)
 			return \Storage::disk('dropbox')->download($arsip->berkas, $arsip->nama_berkas);
 		abort(404);
 	}
+	
 
-	public function show(Arsip $Arsip)
+	public function preview($jenis_dokumen, Arsip $arsip)
 	{
+		$jd = \App\JenisDokumen::where('route', $jenis_dokumen)->first();
+		if(!$jd)
+			abort(404);
+		if($arsip->jenis_dokumen_id != $jd->id)
+			abort(404);
+		if(\Auth::user()->role == 'admin'){
+			if(\Auth::user()->kantor->id != $arsip->kantor_id){
+				abort(404);
+			}
+		}
+		if($arsip->berkas){
+			
+			$berkas = file_get_contents(\Storage::disk('dropbox')->url($arsip->berkas));
+			\Storage::put('haha.pdf', $berkas);
+			return response()->file(
+				storage_path('app\\haha.pdf')
+			)->deleteFileAfterSend(true);
+			return \Storage::download('haha.pdf');
+
+			return response()->redirectTo(\Storage::disk('dropbox')->url($arsip->berkas));
+			return response()->file(
+				$arsip->berkas
+			);
+			$data = \Storage::disk('dropbox')->url($arsip->berkas);
+			header('Content-Type: application/pdf');
+			header('location: '.$data);
+			exit;
+			return $data;
+			return \Storage::disk('dropbox')->download($arsip->berkas);
+		}
+		abort(404);
+	}
+
+	public function edit($jenis_dokumen, Arsip $arsip)
+	{
+		$jd = \App\JenisDokumen::where('route', $jenis_dokumen)->first();
+		if(!$jd)
+			abort(404);
+		if($arsip->jenis_dokumen_id != $jd->id)
+			abort(404);
+		if(\Auth::user()->role == 'admin'){
+			if(\Auth::user()->kantor->id != $arsip->kantor_id){
+				abort(404);
+			}
+		}
 		return view('stisla.arsip.tambah', [
-			'title'			=> $this->modul->label.' Detail',
-			'action'		=> null,
-			'active'		=> 'arsip.index',
-			'modul'			=> $this->modul,
-			'd'				=> $Arsip,
+			'action'		=> route('arsip.update', ['jenis_dokumen'=>$jenis_dokumen, 'arsip'=>$arsip->id]),
+			'active'		=> 'arsip/'.$jenis_dokumen,
+			'jenis_dokumen'	=> $jenis_dokumen,
+			'd'				=> $arsip,
 		]);
 	}
 
-	public function edit(Arsip $Arsip)
+	public function update(Request $request, $jenis_dokumen, Arsip $arsip)
 	{
-		return view('stisla.arsip.tambah', [
-			'title'			=> $this->modul->label.' Ubah',
-			'action'		=> route('arsip.update', ['Arsip'=>$Arsip->id]),
-			'active'		=> 'arsip.index',
-			'modul'			=> $this->modul,
-			'd'				=> $Arsip,
-		]);
-	}
-
-	public function update(Request $request, Arsip $Arsip)
-	{
-		$request->validate([
-			'ini_text'			=> 'required',
-			'ini_email'			=> 'required',
-			'ini_datepicker'	=> 'required',
-			'ini_gambar'		=> 'required',
-			'ini_excel'			=> 'required',
-			'ini_file'			=> 'required',
-			'ini_textarea'		=> 'required',
-			'ini_select'		=> 'required',
-			'ini_select2'		=> 'required',
-			'ini_password'		=> 'required',
-		]);
-
-		$data = [
-			'ini_text'			=> $request->ini_text,
-			'ini_email'			=> $request->ini_email,
-			'ini_datepicker'	=> $request->ini_datepicker,
-			'ini_gambar'		=> $request->file('ini_gambar')->store('public/ini_gambar'),
-			'ini_excel'			=> $request->file('ini_excel')->store('public/ini_excel'),
-			'ini_file'			=> $request->file('ini_file')->store('public/ini_file'),
-			'ini_textarea'		=> $request->ini_textarea,
-			'ini_select'		=> $request->ini_select,
-			'ini_select2'		=> $request->ini_select2,
-			'ini_password'		=> $request->ini_password,
+		$jd = \App\JenisDokumen::where('route', $jenis_dokumen)->first();
+		if(!$jd)
+			abort(404);
+		if($arsip->jenis_dokumen_id != $jd->id)
+			abort(404);
+		if(\Auth::user()->role == 'admin'){
+			if(\Auth::user()->kantor->id != $arsip->kantor_id){
+				abort(404);
+			}
+		}
+		$rules = [
+			'no_surat'		=> 'required',
+			'judul_surat'	=> 'required',
+			'tanggal'		=> 'required',
+			'berkas'		=> 'nullable|file',
 		];
+		if($jenis_dokumen == 'surat_masuk'){
+			$rules['pengirim'] = 'required';
+		}
+		else if($jenis_dokumen == 'surat_keluar'){
+			$rules['penerima'] = 'required';
+		}
+		else if($jenis_dokumen == 'pegawai'){
+			$rules['pegawai'] = 'required';
+		}
+		$request->validate($rules);
+		$data = [
+			'no_surat'			=> $request->no_surat,
+			'judul_surat'		=> $request->judul_surat,
+			'jenis_dokumen_id'	=> $jd->id,
+			'pengirim'			=> $request->pengirim,
+			'penerima'			=> $request->penerima,
+			'tanggal'			=> $request->tanggal,
+			'kantor_id'			=> \Auth::user()->kantor->id,
+		];
+		if($request->file('berkas')){
+			$data = array_merge($data, $this->unggahBerkas($request, $jenis_dokumen));
+			if(\Storage::disk('dropbox')->exists($arsip->berkas)){
+				\Storage::disk('dropbox')->delete($arsip->berkas);
+			}
+		}
 
-		$Arsip->update($data);
+		$arsip->update($data);
 
-		return redirect()->back()->with('success_msg', $this->modul->label.' berhasil diperbarui');
+		$modul = \App\Models\Modul::where('nama', $jenis_dokumen)->first();
+
+		return redirect()->back()->with('success_msg', $modul->label.' berhasil diperbarui');
 	}
 
-	public function destroy(Arsip $Arsip)
+	public function destroy($jenis_dokumen, Arsip $arsip)
 	{
-		$Arsip->delete();
-		return redirect()->back()->with('success_msg', $this->modul->label.' berhasil dihapus');
+		$jd = \App\JenisDokumen::where('route', $jenis_dokumen)->first();
+		if(!$jd)
+			abort(404);
+		if($arsip->jenis_dokumen_id != $jd->id)
+			abort(404);
+		if(\Auth::user()->role == 'admin'){
+			if(\Auth::user()->kantor->id != $arsip->kantor_id){
+				abort(404);
+			}
+		}
+		if($arsip->berkas){
+			if(\Storage::disk('dropbox')->exists($arsip->berkas)){
+				\Storage::disk('dropbox')->delete($arsip->berkas);
+			}
+		}
+		$arsip->delete();
+		$modul = \App\Models\Modul::where('nama', $jenis_dokumen)->first();
+		return redirect()->back()->with('success_msg', $modul->label.' berhasil dihapus');
 	}
 
 }

@@ -11,6 +11,7 @@ class Arsip extends Model
     
     protected $fillable = [
         'no_surat',
+        'judul_surat',
         'jenis_dokumen_id',
         'pengirim',
         'penerima',

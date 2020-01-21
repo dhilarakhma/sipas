@@ -1,6 +1,9 @@
 @php
     $modul = \App\Models\Modul::where('nama', $jenis_dokumen)->first();
     $title = $modul->label.' Baru';
+    if(isset($d)){
+        $title = $modul->label.' Ubah';
+    }
 @endphp
 @extends('stisla.layouts.form')
 
@@ -34,6 +37,10 @@
                             </div>
 
                             <div class="col-md-6">
+                                @input(['id'=>'judul_surat', 'value'=>isset($d)?$d->judul_surat : '', 'ikon'=>'fas fa-envelope-open'])
+                            </div>
+
+                            <div class="col-md-6">
                                 @datepicker(['id'=>'tanggal', 'value'=>isset($d)?$d->tanggal : date('Y-m-d')])
                             </div>
 
@@ -45,7 +52,7 @@
 
                             @if($jenis_dokumen == 'surat_masuk')
                             <div class="col-md-6">
-                                @input(['id'=>'pengirim', 'ikon'=>'fas fa-user'])
+                                @input(['id'=>'pengirim', 'value'=>isset($d)?$d->pengirim : '',  'ikon'=>'fas fa-user'])
                             </div>
                             @endif
 
@@ -56,7 +63,7 @@
                             @endif
 
                             <div class="col-md-6">
-                                @file(['id'=>'berkas', 'ikon'=>'fas fa-file'])
+                                @file(['id'=>'berkas', 'ikon'=>'fas fa-file', 'required'=>isset($d)?false:true])
                             </div>
 
                             @if($action)

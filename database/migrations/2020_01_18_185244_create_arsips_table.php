@@ -15,6 +15,7 @@ class CreateArsipsTable extends Migration
     {
         Schema::create('arsip', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->string('judul_surat')->nullable();
             $table->string('no_surat')->nullable();
             $table->bigInteger('jenis_dokumen_id')->unsigned();
             $table->foreign('jenis_dokumen_id')->on('jenis_dokumen')->references('id')->onUpdate('cascade')->onDelete("cascade");

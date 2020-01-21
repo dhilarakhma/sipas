@@ -16,6 +16,13 @@
 <div class="section-body">
     <div class="row">
         <div class="col-12">
+
+            @if(Auth::user()->role == 'superadmin')
+            <div class="alert alert-info">
+                Untuk superadmin tidak bisa menambahkan arsip, hanya diperuntukkan bagi admin kantor. Superadmin hanya bisa preview, unduh dan cetak
+            </div>
+            @endif
+
             <div class="card">
                 <div class="card-header">
                     <h4> <i class="{{$modul->ikon}}"></i> {{ $title }} </h4>
@@ -32,6 +39,7 @@
                                 <tr>
                                     <th>#</th>
                                     <th>No Surat</th>
+                                    <th>Judul Surat</th>
                                     <th>Tanggal</th>
                                     @if($jenis_dokumen == 'surat_keluar')
                                     <th>Penerima</th>
@@ -42,6 +50,7 @@
                                     @if($jenis_dokumen == 'pegawai')
                                     <th>Pegawai</th>
                                     @endif
+                                    <th>Ekstensi</th>
                                     <th>Berkas</th>
                                     @if(Auth::user()->role == 'admin')
                                     <th>Aksi</th>
@@ -53,6 +62,7 @@
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $d->no_surat }}</td>
+                                    <td>{{ $d->judul_surat }}</td>
                                     <td>{{ $d->tanggal }}</td>
                                     @if($jenis_dokumen == 'surat_keluar')
                                     <td>{{ $d->penerima }}</td>
@@ -63,9 +73,11 @@
                                     @if($jenis_dokumen == 'pegawai')
                                     <td>{{ $d->pegawai }}</td>
                                     @endif
+                                    <td>{{ $d->ekstensi_berkas }}</td>
                                     <td>
                                         @if($d->berkas)
                                         <a href="{{ route('arsip.unduh', [$jenis_dokumen, $d->id]) }}" target="_blank">unduh</a>
+                                        <a href="{{ route('arsip.preview', [$jenis_dokumen, $d->id]) }}" target="_blank">preview</a>
                                         @else
                                         -
                                         @endif
@@ -78,10 +90,10 @@
                                             Aksi
                                         </button>
                                         <div class="dropdown-menu">
-                                            <a class="dropdown-item has-icon" href="{{ route('contoh.edit', $d->id) }}">
+                                            <a class="dropdown-item has-icon" href="{{ route('arsip.edit', [$jenis_dokumen, $d->id]) }}">
                                                 <i class="fas fa-edit"></i> Ubah
                                             </a>
-                                            <a onclick="hapus(event, '{{ route('contoh.destroy', $d->id) }}')"
+                                            <a onclick="hapus(event, '{{ route('arsip.destroy', [$jenis_dokumen, $d->id]) }}')"
                                                 class="dropdown-item has-icon" href="#">
                                                 <i class="fas fa-trash"></i> Hapus
                                             </a>
