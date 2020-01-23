@@ -34,6 +34,8 @@
                 @gambar(['id'=>$d->key, 'label'=>$d->label, 'ikon'=>$d->ikon, 'value'=>$d->value, 'required'=>false])
                 @elseif($d->form_type == "select2")
                 @select2(['id'=>$d->key, 'label'=>$d->label, 'value'=>$d->value, 'select_data'=>$d->pilihan])
+                @elseif($d->form_type == "select")
+                @select(['id'=>$d->key, 'label'=>$d->label, 'value'=>$d->value, 'select_data'=>$d->pilihan])
                 @else
                 @input(['id'=>$d->key, 'label'=>$d->label, 'ikon'=>$d->ikon, 'value'=>$d->value])
                 @endif

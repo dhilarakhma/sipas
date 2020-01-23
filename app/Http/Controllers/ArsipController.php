@@ -14,7 +14,7 @@ class ArsipController extends Controller
 	public function __construct()
 	{
 		// $this->modul = \App\Models\Modul::where('nama', $this->jenis_dokumen)->first();
-		$this->middleware(\App\Http\Middleware\HanyaAdmin::class)->except('index', 'unduh');
+		$this->middleware(\App\Http\Middleware\HanyaAdmin::class)->except('index', 'unduh', 'laporan', 'laporanPdf');
 	}
 
 	private function unggahBerkas(Request $request, String $jenis_dokumen)
@@ -44,6 +44,8 @@ class ArsipController extends Controller
 			'active'			=> 'arsip/'.$jenis_dokumen,
 			'jenis_dokumen'		=> $jenis_dokumen,
 			'action_tambah'		=> route('arsip.create', [$jenis_dokumen]),
+			'action_laporan'	=> route('arsip.laporan', [$jenis_dokumen]),
+			'action_laporan_pdf'=> route('arsip.laporan.pdf', [$jenis_dokumen]),
 		]);
 	}
 
@@ -90,6 +92,8 @@ class ArsipController extends Controller
 			'tanggal'			=> $request->tanggal,
 			'kantor_id'			=> \Auth::user()->kantor->id,
 			'disk'				=> config('dropbox.active'),
+			'maksud_surat'		=> $request->maksud_surat,
+			'keterangan'		=> $request->keterangan,
 		];
 
 		$data = array_merge($data, $this->unggahBerkas($request, $jenis_dokumen));
@@ -119,7 +123,7 @@ class ArsipController extends Controller
 	}
 	
 
-	public function preview($jenis_dokumen, Arsip $arsip)
+	public function preview($jenis_dokumen, Arsip $arsip, Request $request)
 	{
 		$jd = \App\JenisDokumen::where('route', $jenis_dokumen)->first();
 		if(!$jd)
@@ -131,25 +135,27 @@ class ArsipController extends Controller
 				abort(404);
 			}
 		}
-		if($arsip->berkas){
-			
-			$berkas = file_get_contents(\Storage::disk('dropbox')->url($arsip->berkas));
-			\Storage::put('haha.pdf', $berkas);
-			return response()->file(
-				storage_path('app\\haha.pdf')
-			)->deleteFileAfterSend(true);
-			return \Storage::download('haha.pdf');
+		
+		if(env('IS_HEROKU', true))
+			return 'server tidak mendukung preview';
 
-			return response()->redirectTo(\Storage::disk('dropbox')->url($arsip->berkas));
-			return response()->file(
-				$arsip->berkas
-			);
-			$data = \Storage::disk('dropbox')->url($arsip->berkas);
-			header('Content-Type: application/pdf');
-			header('location: '.$data);
-			exit;
-			return $data;
-			return \Storage::disk('dropbox')->download($arsip->berkas);
+		if($arsip->berkas){
+
+			if($arsip->ekstensi_berkas != 'pdf')
+				return 'ekstensi berkas tidak didukung untuk preview';
+
+			$berkas = file_get_contents(\Storage::disk(config('dropbox.active'))->url($arsip->berkas));
+			$preview_file = 'public/'.\Auth::user()->email.'/preview.pdf';
+			\Storage::put($preview_file, $berkas);
+
+			$filename = 'preview.pdf';
+			$headers = [
+				'Content-Type' => 'application/pdf',
+			    'Content-Disposition' => 'inline; filename="'.$filename.'"'
+			];
+
+			return response()->file(storage_path('app/'.$preview_file), $headers);
+
 		}
 		abort(404);
 	}
@@ -209,12 +215,15 @@ class ArsipController extends Controller
 			'pengirim'			=> $request->pengirim,
 			'penerima'			=> $request->penerima,
 			'tanggal'			=> $request->tanggal,
+			'maksud_surat'		=> $request->maksud_surat,
+			'keterangan'		=> $request->keterangan,
+			'tanggal'			=> $request->tanggal,
 			'kantor_id'			=> \Auth::user()->kantor->id,
 		];
 		if($request->file('berkas')){
 			$data = array_merge($data, $this->unggahBerkas($request, $jenis_dokumen));
-			if(\Storage::disk('dropbox')->exists($arsip->berkas)){
-				\Storage::disk('dropbox')->delete($arsip->berkas);
+			if(\Storage::disk(config('dropbox.active'))->exists($arsip->berkas)){
+				\Storage::disk(config('dropbox.active'))->delete($arsip->berkas);
 			}
 		}
 
@@ -238,13 +247,51 @@ class ArsipController extends Controller
 			}
 		}
 		if($arsip->berkas){
-			if(\Storage::disk('dropbox')->exists($arsip->berkas)){
-				\Storage::disk('dropbox')->delete($arsip->berkas);
+			if(\Storage::disk(config('dropbox.active'))->exists($arsip->berkas)){
+				\Storage::disk(config('dropbox.active'))->delete($arsip->berkas);
 			}
 		}
 		$arsip->delete();
 		$modul = \App\Models\Modul::where('nama', $jenis_dokumen)->first();
 		return redirect()->back()->with('success_msg', $modul->label.' berhasil dihapus');
+	}
+
+	private function getData($jenis_dokumen)
+	{
+		$jd = \App\JenisDokumen::where('route', $jenis_dokumen)->first();
+		if(!$jd)
+			abort(404);
+		$data = Arsip::where('jenis_dokumen_id', $jd->id);
+		if(\Auth::user()->role == 'admin')
+			$data = $data->where('kantor_id', \Auth::user()->kantor->id);
+		$data = $data->orderBy('tanggal', 'DESC')->get();
+		return [
+			'data'=>$data,
+			'jd'=>$jd,
+			'jenis_dokumen'=>$jenis_dokumen,
+		];
+	}
+
+	public function laporan($jenis_dokumen)
+	{
+		$ss = $this->getData($jenis_dokumen);
+		return view('stisla.arsip.laporan', [
+			'data'	=> $ss['data'],
+			'jd'=>$ss['jd'],
+			'jenis_dokumen'=>$ss['jenis_dokumen'],
+		]);
+	}
+
+	public function laporanPdf($jenis_dokumen)
+	{
+		$ukuran_kertas = \App\Models\Pengaturan::where('key', 'ukuran_kertas')->first()->value;
+		$layouts = \App\Models\Pengaturan::where('key', 'layouts')->first()->value;
+		$ss = $this->getData($jenis_dokumen);
+		return \PDF::loadView('stisla.arsip.laporan', [
+			'data'	=> $ss['data'],
+			'jd'=>$ss['jd'],
+			'jenis_dokumen'=>$ss['jenis_dokumen'],
+		])->setPaper($ukuran_kertas, $layouts)->download('laporan_'.$jenis_dokumen.'.pdf');
 	}
 
 }

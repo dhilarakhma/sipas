@@ -66,6 +66,16 @@
                                 @file(['id'=>'berkas', 'ikon'=>'fas fa-file', 'required'=>isset($d)?false:true])
                             </div>
 
+                            @if($jenis_dokumen == 'surat_masuk')
+                            <div class="col-md-6">
+                                @input(['id'=>'maksud_surat', 'ikon'=>'fas fa-cube', 'required'=>false, 'value'=>isset($d)?$d->maksud_surat : ''])
+                            </div>
+                            @endif
+
+                            <div class="col-md-12">
+                                @textarea(['id'=>'keterangan', 'required'=>false, 'value'=>isset($d)?$d->keterangan : ''])
+                            </div>
+
                             @if($action)
                             <div class="col-md-12">
                                 <button type="submit" class="btn btn-primary btn-block">Simpan</button>

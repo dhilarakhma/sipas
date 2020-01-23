@@ -64,10 +64,39 @@ class GeneratePengaturan extends Seeder
             'key'       => 'sidebar_mini',
             'value'     => 'true',
             'label'     => 'Sidebar Mini',
-            'form_type' => 'select2',
+            'form_type' => 'select',
             'pilihan'   => [
                 'true' => 'true',
                 'false' => 'false',
+            ]
+        ]);
+        // laporan
+        Pengaturan::create([
+            'key'               => 'ukuran_kertas',
+            'value'             => 'A4',
+            'ikon'              => 'fas fa-paper',
+            'label'             => 'Ukuran Kertas',
+            'grup_label'        => 'Pengaturan Laporan',
+            'grup'              => 'pengaturan_laporan',
+            'form_type'         => 'select',
+            'pilihan'           => [
+                'A4'    => 'A4',
+                'A3'    => 'A3',
+                'F4'    => 'F4',
+                'Legal'    => 'Legal',
+            ]
+        ]);
+        Pengaturan::create([
+            'key'               => 'layouts',
+            'value'             => 'landscape',
+            'ikon'              => 'fas fa-paper',
+            'label'             => 'Layouts',
+            'grup_label'        => 'Pengaturan Laporan',
+            'grup'              => 'pengaturan_laporan',
+            'form_type'         => 'select',
+            'pilihan'           => [
+                'landscape'    => 'landscape',
+                'portrait'    => 'portrait',
             ]
         ]);
         // meta

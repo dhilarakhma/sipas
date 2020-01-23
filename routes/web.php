@@ -3,6 +3,8 @@
 Route::middleware(\App\Http\Middleware\Masuk::class)->group(function(){
     Route::get('/arsip/{jenis_dokumen}', 'ArsipController@index')->name('arsip');
     Route::get('/arsip/{jenis_dokumen}/tambah', 'ArsipController@create')->name('arsip.create');
+    Route::get('/arsip/{jenis_dokumen}/laporan', 'ArsipController@laporan')->name('arsip.laporan');
+    Route::get('/arsip/{jenis_dokumen}/laporan/pdf', 'ArsipController@laporanPdf')->name('arsip.laporan.pdf');
     Route::post('/arsip/{jenis_dokumen}', 'ArsipController@store')->name('arsip.store');
     Route::get('/arsip/{jenis_dokumen}/unduh/{arsip}', 'ArsipController@unduh')->name('arsip.unduh');
     Route::get('/arsip/{jenis_dokumen}/preview/{arsip}', 'ArsipController@preview')->name('arsip.preview');
