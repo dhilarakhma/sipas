@@ -16,6 +16,13 @@
 <div class="section-body">
     <div class="row">
         <div class="col-12">
+
+            @if(env('IS_HEROKU', true))
+                <div class="alert alert-info">
+                    Kantor tidak bisa dihapus saat aplikasi dalam status demo
+                </div>
+            @endif
+
             <div class="card">
                 <div class="card-header">
                     <h4> <i class="{{$modul->ikon}}"></i> {{ $title }} </h4>

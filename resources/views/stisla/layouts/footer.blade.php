@@ -10,6 +10,10 @@
 		Copyright &copy; {{ $_tahun }} <div class="bullet"></div> <a href="{{ route('dashboard') }}">{{ $_nama_aplikasi }}</a> 
 		<span> ♥ Aplikasi dibuat oleh {{ $_nama_developer }}</span>
 		<span> ♥ WhatsApp di <a href="https://wa.me/{{ $_whatsapp_developer }}" target="_blank">{{ $_whatsapp_developer }}</a></span>
+
+		@if(env('IS_HEROKU', true))
+		<span class="badge badge-primary">Versi Demo</span>
+		@endif
 	</div>
 	<div class="footer-right">
 		Versi {{ $_versi }}

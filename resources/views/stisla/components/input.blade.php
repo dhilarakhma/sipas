@@ -30,7 +30,7 @@ $is_label             = isset($label) ? $label : \Str::title(str_replace('_', ' 
     </div>
     @endisset
     
-      <input id="{{ $id }}" {!! $is_name !!} {!! $is_type !!} {!! $is_required !!} {!! $is_min !!} {!! $is_max !!} {!! $is_disabled !!} {!! $is_readonly !!} {!! $is_accept !!} {!! $is_value !!}  class="form-control {{ $class_append ?? '' }} {{ $status_class }}">
+      <input id="{{ $id }}" {!! $is_name !!} {!! $is_type !!} {!! $is_required !!} {!! $is_min !!} {!! $is_max !!} {!! $is_disabled !!} {!! $is_readonly !!} {!! $is_accept !!} {!! $is_value !!}  class="form-control {{ $class_append ?? '' }} {{ $status_class }}" {!! $is_disabled !!}>
       
       @isset($ikon2)
       <div class="input-group-prepend ikon2">

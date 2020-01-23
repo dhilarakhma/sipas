@@ -48,7 +48,7 @@ class KantorController extends Controller
 			'email'			=> $request->email,
 			'nama'			=> $request->nama_admin,
 			'password'		=> bcrypt($request->password),
-            'avatar'        => asset('assets/img/avatar/avatar-1.png'),
+			'avatar'        => asset('assets/img/avatar/avatar-1.png'),
 		];
 		$user = \App\User::create($user_data);
 		$data = [
@@ -79,17 +79,19 @@ class KantorController extends Controller
 		$rules = [
 			'kantor'		=> 'required',
 			'nama_admin'	=> 'required',
-			'email'			=> 'required|email|unique:users,email,'.$kantor->user->id,
-			'password'		=> 'nullable',
 		];
-		$request->validate($rules);
 		$user_data = [
-			'email'			=> $request->email,
 			'nama'			=> $request->nama_admin,
 		];
-		if($request->filled('password')){
-			$user_data['password'] = bcrypt($request->password);
+		if(!env('IS_HEROKU', true)){
+			$rules['email']			= 'required|email|unique:users,email,'.$kantor->user->id;
+			$rules['password']		= 'nullable';
+			$user_data['email']		= $request->email;
+			if($request->filled('password')){
+				$user_data['password'] = bcrypt($request->password);
+			}
 		}
+		$request->validate($rules);
 		$kantor->user->update($user_data);
 		$data = [
 			'nama'				=> $request->kantor,
@@ -102,8 +104,11 @@ class KantorController extends Controller
 
 	public function destroy(Kantor $kantor)
 	{
-		$kantor->delete();
-		return redirect()->back()->with('success_msg', $this->modul->label.' berhasil dihapus');
+		if(!env('IS_HEROKU', true)){
+			$kantor->delete();
+			return redirect()->back()->with('success_msg', $this->modul->label.' berhasil dihapus');
+		}	
+		return redirect()->back()->with('error_msg', $this->modul->label.' gagal dihapus saat demo');
 	}
 
 }

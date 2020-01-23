@@ -13,6 +13,13 @@
 <div class="section-body">
     <div class="row">
         <div class="col-12">
+
+            @if(env('IS_HEROKU', true))
+                <div class="alert alert-info">
+                    Email dan password saat demo tidak bisa diubah  
+                </div>
+            @endif
+
             <div class="card">
                 <div class="card-header">
                     <h4> <i class="{{$modul->ikon}}"></i> {{ $title }}</h4>
@@ -34,11 +41,11 @@
                             </div>
 
                             <div class="col-md-6">
-                                @email(['value'=>isset($d)?$d->user->email : ''])
+                                @email(['value'=>isset($d)?$d->user->email : '', 'disabled'=>env('IS_HEROKU', true)?true:false])
                             </div>
 
                             <div class="col-md-6">
-                                @password(['required'=>isset($d)?false:true])
+                                @password(['required'=>isset($d)?false:true, 'disabled'=>env('IS_HEROKU', true)?true:false])
                             </div>
 
                             @if($action)

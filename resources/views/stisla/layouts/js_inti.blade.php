@@ -45,6 +45,16 @@ integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07j
     
 </script>
 @endif
+
+<!-- Your custom script -->
+@if(session('error_msg'))
+<script>
+
+    swal('Gagal', '{{ session('error_msg') }}', 'error');
+    
+</script>
+@endif
+
 @stack('script')
 
 @if(\App\Models\Pengaturan::where('key', 'sidebar_mini')->first()->value == 'true')

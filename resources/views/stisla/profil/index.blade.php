@@ -15,6 +15,13 @@
 <div class="section-body">
   <div class="row">
     <div class="col-12">
+
+      @if(env('IS_HEROKU', true))
+      <div class="alert alert-info">
+        Email dan password saat demo tidak bisa diubah  
+      </div>
+      @endif
+
       <div class="card">
         <div class="card-header">
           <h4> <i class="{{$_ikon}}"></i> {{ $title }}</h4>
@@ -33,10 +40,10 @@
                 @gambar(['id'=>'avatar', 'label'=>'Avatar', 'ikon'=>'fas fa-image', 'required'=>false])
               </div>
               <div class="col-md-6">
-                @email(['value'=>isset($d)?$d->email : ''])
+                @email(['value'=>isset($d)?$d->email : '', 'disabled'=>env('IS_HEROKU', true)?true:false])
               </div>
               <div class="col-md-6">
-                @password(['required'=>false])
+                @password(['required'=>false, 'disabled'=>env('IS_HEROKU', true)?true:false])
               </div>
               <div class="col-md-12">
                 <button type="submit" class="btn btn-primary btn-block">Simpan</button>

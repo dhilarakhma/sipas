@@ -70,19 +70,22 @@ class AutentikasiController extends Controller
 	public function perbaruiProfil(Request $request)
 	{
 		$user = \Auth::user();
-		$request->validate([
+		$rules = [
 			'nama'			=> 'required',
-			'email'			=> 'required|unique:users,email,'.$user->id,
-			'password'		=> 'nullable|min:5',
 			'avatar'		=> 'nullable|file|mimes:jpeg,png',
-		]);
+		];
+		if(!env('IS_HEROKU', true)){
+			$rules['email']			= 'required|unique:users,email,'.$user->id;
+			$rules['password']		= 'nullable|min:5';
+			$user->email = $request->email;
+			if($request->filled('password'))
+				$user->password = bcrypt($request->password);
+		}
+		$request->validate($rules);
 		$user->nama = $request->nama;
-		$user->email = $request->email;
 		if($request->file('avatar')){
 			$user->avatar = asset(\Storage::url($request->file('avatar')->store('public/avatar')));
 		}
-		if($request->filled('password'))
-			$user->password = bcrypt($request->password);
 		$user->save();
 		return redirect()->back()->with('success_msg', 'Profil berhasil diperbarui');
 	}

@@ -75,6 +75,7 @@
             alt="{{ $_nama_perusahaan }}">
         <h5 class="nama_perusahaan">
             {{ $_nama_perusahaan }}
+
         </h5>
     </div>
     <ul class="navbar-nav navbar-right">
