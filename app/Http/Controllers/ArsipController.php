@@ -22,7 +22,7 @@ class ArsipController extends Controller
 		$nama_berkas = $request->berkas->getClientOriginalName();
 		$berkas_array = explode('.', $nama_berkas);
 		$ekstensi_berkas = end($berkas_array);
-		$path = $request->file('berkas')->store(\Auth::user()->email.'/'.$jenis_dokumen.'/'.$request->tanggal.'/'.$nama_berkas, 'dropbox');
+		$path = $request->file('berkas')->store(\Auth::user()->email.'/'.$jenis_dokumen.'/'.$request->tanggal.'/'.$nama_berkas, config('dropbox.active'));
 		return [
 			'nama_berkas'			=> $nama_berkas,
 			'ekstensi_berkas'		=> $ekstensi_berkas,
