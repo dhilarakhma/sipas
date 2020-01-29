@@ -23,9 +23,42 @@
             </div>
             @endif
 
+            
+            @if(count($tahun) > 0)
             <div class="alert alert-info">
                 Preview hanya bisa dilakukan jika berkas berformat <span class="badge badge-danger">pdf</span> dan pastikan anda tidak mengunduh <a href="https://www.internetdownloadmanager.com/"> Internet Download Manager</a> dikarenakan preview tidak akan tampil akan langsung diunduh
             </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h4>
+                        <i class="{{$modul->ikon}}"></i> Filter {{$title}} berdasarkan tahun
+                    </h4>
+                </div>
+                <div class="card-body">
+
+                    <form action="">
+                        @csrf
+                    
+                        @select(['id'=>'tahun', 'select_data'=>$tahun])
+
+                        <button type="submit" class="btn btn-block btn-primary">Lihat</button>
+
+                        <a target="_blank" href="#" onclick="laporan(event, this)" data-href="{{ $action_laporan }}" class="btn btn-success btn-block"> <i class="fas fa-file"></i> Laporan
+                        </a>
+                        <a target="_blank" href="#" onclick="laporan(event, this)" data-href="{{ $action_laporan_pdf }}" class="btn btn-danger btn-block"> <i class="fas fa-file-pdf"></i> Laporan PDF
+                        </a>
+                    </form>
+                </div>
+            </div>
+            @else
+            <div class="alert alert-info">
+                1. Preview hanya bisa dilakukan jika berkas berformat <span class="badge badge-danger">pdf</span> dan pastikan anda tidak mengunduh <a href="https://www.internetdownloadmanager.com/"> Internet Download Manager</a> dikarenakan preview tidak akan tampil akan langsung diunduh.
+                <br>
+                2. Laporan akan muncul ketika sudah ada data
+            </div>
+            @endif
+
 
             <div class="card">
                 <div class="card-header">
@@ -35,10 +68,6 @@
                     <a href="{{ $action_tambah }}" class="btn btn-primary float-right"> <i class="fas fa-plus"></i> Baru
                     </a>
                     @endif
-                    <a target="_blank" href="{{ $action_laporan }}" class="btn btn-success float-right"> <i class="fas fa-file"></i> Laporan
-                    </a>
-                    <a target="_blank" href="{{ $action_laporan_pdf }}" class="btn btn-danger float-right"> <i class="fas fa-file-pdf"></i> Laporan PDF
-                    </a>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
@@ -58,6 +87,12 @@
                                     @endif
                                     @if($jenis_dokumen == 'pegawai')
                                     <th>Pegawai</th>
+                                    @endif
+                                    @if($jenis_dokumen == 'undangan')
+                                    <th>Acara</th>
+                                    <th>Delegasi Hadir</th>
+                                    <th>Tempat</th>
+                                    <th>Pengundang</th>
                                     @endif
                                     <th>Ekstensi</th>
                                     <th>Berkas</th>
@@ -83,6 +118,12 @@
                                     @endif
                                     @if($jenis_dokumen == 'pegawai')
                                     <td>{{ $d->pegawai }}</td>
+                                    @endif
+                                    @if($jenis_dokumen == 'undangan')
+                                    <td>{{ $d->acara }}</td>
+                                    <td>{{ $d->delegasi_hadir }}</td>
+                                    <td>{{ $d->tempat }}</td>
+                                    <td>{{ $d->pengundang }}</td>
                                     @endif
                                     <td>{!! $d->ekstensi_berkas_label !!}</td>
                                     <td>
@@ -127,3 +168,14 @@
     </div>
 </div>
 @endsection
+
+
+@push('script')
+    <script>
+        function laporan(e, elem){
+            e.preventDefault();
+            var url = $(elem).data('href') + '?tahun=' + $('#tahun').val();
+            window.open(url);
+        }
+    </script>
+@endpush

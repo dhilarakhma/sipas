@@ -30,7 +30,7 @@ class ArsipController extends Controller
 		];
 	}
 
-	public function index($jenis_dokumen)
+	public function index($jenis_dokumen, Request $request)
 	{
 		$jd = \App\JenisDokumen::where('route', $jenis_dokumen)->first();
 		if(!$jd)
@@ -38,7 +38,16 @@ class ArsipController extends Controller
 		$data = Arsip::where('jenis_dokumen_id', $jd->id);
 		if(\Auth::user()->role == 'admin')
 			$data = $data->where('kantor_id', \Auth::user()->kantor->id);
-		$data = $data->orderBy('tanggal', 'DESC')->get();
+		$tahun = $request->query('tahun');
+		if($tahun)
+			$data = $data->whereYear('tanggal', $tahun)->orderBy('tanggal', 'DESC')->get();
+		else
+			$data = collect([]);
+		$tahun = \DB::table('arsip')->select(\DB::raw('year(tanggal) as tahun'))
+		->where('kantor_id', \Auth::user()->kantor->id)
+		->where('jenis_dokumen_id', $jd->id)
+		->get();
+		$tahun = collect($tahun)->pluck('tahun', 'tahun')->all();
 		return view('stisla.arsip.index', [
 			'data'				=> $data,
 			'active'			=> 'arsip/'.$jenis_dokumen,
@@ -46,6 +55,7 @@ class ArsipController extends Controller
 			'action_tambah'		=> route('arsip.create', [$jenis_dokumen]),
 			'action_laporan'	=> route('arsip.laporan', [$jenis_dokumen]),
 			'action_laporan_pdf'=> route('arsip.laporan.pdf', [$jenis_dokumen]),
+			'tahun'				=> $tahun,
 		]);
 	}
 
@@ -94,6 +104,10 @@ class ArsipController extends Controller
 			'disk'				=> config('dropbox.active'),
 			'maksud_surat'		=> $request->maksud_surat,
 			'keterangan'		=> $request->keterangan,
+			'acara'				=> $request->acara,
+			'tempat'			=> $request->tempat,
+			'pengundang'		=> $request->pengundang,
+			'delegasi_hadir'	=> $request->delegasi_hadir,
 		];
 
 		$data = array_merge($data, $this->unggahBerkas($request, $jenis_dokumen));
@@ -219,6 +233,10 @@ class ArsipController extends Controller
 			'keterangan'		=> $request->keterangan,
 			'tanggal'			=> $request->tanggal,
 			'kantor_id'			=> \Auth::user()->kantor->id,
+			'acara'				=> $request->acara,
+			'tempat'			=> $request->tempat,
+			'pengundang'		=> $request->pengundang,
+			'delegasi_hadir'	=> $request->delegasi_hadir,
 		];
 		if($request->file('berkas')){
 			$data = array_merge($data, $this->unggahBerkas($request, $jenis_dokumen));
@@ -256,15 +274,19 @@ class ArsipController extends Controller
 		return redirect()->back()->with('success_msg', $modul->label.' berhasil dihapus');
 	}
 
-	private function getData($jenis_dokumen)
+	private function getData($jenis_dokumen, $request)
 	{
 		$jd = \App\JenisDokumen::where('route', $jenis_dokumen)->first();
 		if(!$jd)
 			abort(404);
+		$tahun = $request->query('tahun');
 		$data = Arsip::where('jenis_dokumen_id', $jd->id);
 		if(\Auth::user()->role == 'admin')
-			$data = $data->where('kantor_id', \Auth::user()->kantor->id);
-		$data = $data->orderBy('tanggal', 'DESC')->get();
+		$data = $data->where('kantor_id', \Auth::user()->kantor->id);
+		if($tahun)
+			$data = $data->whereYear('tanggal', $tahun)->orderBy('tanggal', 'DESC')->get();
+		else 
+			$data = collect([]);
 		return [
 			'data'=>$data,
 			'jd'=>$jd,
@@ -272,25 +294,35 @@ class ArsipController extends Controller
 		];
 	}
 
-	public function laporan($jenis_dokumen)
+	public function laporan($jenis_dokumen, Request $request)
 	{
-		$ss = $this->getData($jenis_dokumen);
+		if(!$request->query('tahun'))
+			return 'Tidak ada data ditemukan';
+		$ss = $this->getData($jenis_dokumen, $request);
+		if(count($ss['data']) <= 0)
+			return 'Tidak ada data ditemukan';
 		return view('stisla.arsip.laporan', [
 			'data'	=> $ss['data'],
 			'jd'=>$ss['jd'],
 			'jenis_dokumen'=>$ss['jenis_dokumen'],
+			'tahun'=>$request->query('tahun'),
 		]);
 	}
 
-	public function laporanPdf($jenis_dokumen)
+	public function laporanPdf($jenis_dokumen, Request $request)
 	{
+		if(!$request->query('tahun'))
+			return 'Tidak ada data ditemukan';
 		$ukuran_kertas = \App\Models\Pengaturan::where('key', 'ukuran_kertas')->first()->value;
+		if(count($ss['data']) <= 0)
+			return 'Tidak ada data ditemukan';
 		$layouts = \App\Models\Pengaturan::where('key', 'layouts')->first()->value;
-		$ss = $this->getData($jenis_dokumen);
+		$ss = $this->getData($jenis_dokumen, $request);
 		return \PDF::loadView('stisla.arsip.laporan', [
 			'data'	=> $ss['data'],
 			'jd'=>$ss['jd'],
 			'jenis_dokumen'=>$ss['jenis_dokumen'],
+			'tahun'=>$request->query('tahun'),
 		])->setPaper($ukuran_kertas, $layouts)->download('laporan_'.$jenis_dokumen.'.pdf');
 	}
 

@@ -27,6 +27,10 @@ class Arsip extends Model
         'disk',
         'keterangan',
         'maksud_surat',
+        'acara',
+        'tempat',
+        'pengundang',
+        'delegasi_hadir',
     ];
 
     public function getEkstensiBerkasLabelAttribute()
@@ -37,6 +41,7 @@ class Arsip extends Model
             return '<span class="badge badge-success">'.$this->ekstensi_berkas.'</span>';
         if(in_array($this->ekstensi_berkas, ['doc','docx']))
             return '<span class="badge badge-primary">'.$this->ekstensi_berkas.'</span>';
+        return '<span class="badge badge-info">'.$this->ekstensi_berkas.'</span>';
     }
     
 }

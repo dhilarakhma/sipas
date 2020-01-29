@@ -72,6 +72,21 @@
                             </div>
                             @endif
 
+                            @if($jenis_dokumen == 'undangan')
+                            <div class="col-md-6">
+                                @input(['id'=>'acara', 'ikon'=>'fas fa-atom', 'required'=>false, 'value'=>isset($d)?$d->acara : ''])
+                            </div>
+                            <div class="col-md-6">
+                                @input(['id'=>'tempat', 'ikon'=>'fas fa-university', 'required'=>false, 'value'=>isset($d)?$d->tempat : ''])
+                            </div>
+                            <div class="col-md-6">
+                                @input(['id'=>'pengundang', 'ikon'=>'fas fa-user', 'required'=>false, 'value'=>isset($d)?$d->pengundang : ''])
+                            </div>
+                            <div class="col-md-6">
+                                @input(['id'=>'delegasi_hadir', 'ikon'=>'fas fa-users', 'required'=>false, 'value'=>isset($d)?$d->delegasi_hadir : ''])
+                            </div>
+                            @endif
+
                             <div class="col-md-12">
                                 @textarea(['id'=>'keterangan', 'required'=>false, 'value'=>isset($d)?$d->keterangan : ''])
                             </div>

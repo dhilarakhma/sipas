@@ -51,6 +51,13 @@ class GenerateMenu extends Seeder
         	'url'		=> 'arsip/organisasi',
 			'roles'		=> $roles,
 		]);
+        Menu::create([
+        	'id'		=> $i++,
+        	'nama'		=> 'Undangan',
+        	'ikon'		=> 'fas fa-envelope-open-text',
+        	'url'		=> 'arsip/undangan',
+			'roles'		=> $roles,
+		]);
 		Menu::create([
         	'id'		=> $i++,
         	'nama'		=> 'Kantor',

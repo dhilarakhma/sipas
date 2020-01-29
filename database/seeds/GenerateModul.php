@@ -59,6 +59,12 @@ class GenerateModul extends Seeder
         ]);
         Modul::create([
         	'id'		=> $i++,
+            'nama'		=> 'undangan',
+            'label'     => 'Undangan',
+        	'ikon'		=> 'fa fa-envelope-open-text',
+        ]);
+        Modul::create([
+        	'id'		=> $i++,
             'nama'		=> 'kantor',
             'label'     => 'Kantor',
         	'ikon'		=> 'fa fa-university',

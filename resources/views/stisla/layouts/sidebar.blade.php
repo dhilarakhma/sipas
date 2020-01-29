@@ -15,7 +15,7 @@
       @if($loop->iteration == 2)
       <li class="menu-header">Arsip</li>
       @endif
-      @if($loop->iteration == 6)
+      @if($loop->iteration == 7)
       <li class="menu-header">Lainnya</li>
       @endif
       @if($loop->iteration == 1)

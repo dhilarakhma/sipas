@@ -27,6 +27,10 @@ class CreateArsipsTable extends Migration
             $table->string('ekstensi_berkas');
             $table->text('keterangan')->nullable();
             $table->string('maksud_surat')->nullable();
+            $table->string('acara')->nullable();
+            $table->string('tempat')->nullable();
+            $table->string('pengundang')->nullable();
+            $table->string('delegasi_hadir')->nullable();
             $table->timestamps();
         });
     }

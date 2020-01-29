@@ -32,6 +32,8 @@
 	@if(Auth::user()->role == 'admin')
 	<br>
 	Kantor: {{Auth::user()->kantor->nama}}
+	<br>
+	Tahun: {{$tahun}}
 	@endif
 	<br>
 	<br>

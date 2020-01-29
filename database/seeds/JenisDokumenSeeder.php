@@ -31,6 +31,10 @@ class JenisDokumenSeeder extends Seeder
             'nama'      => 'Organisasi',
             'route'     => \Str::snake(strtolower('Organisasi')),
         ];
+        $data[] = [
+            'nama'      => 'Undangan',
+            'route'     => \Str::snake(strtolower('Undangan')),
+        ];
         DB::table('jenis_dokumen')->insert($data);
     }
 }
