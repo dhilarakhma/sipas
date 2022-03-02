@@ -29,7 +29,7 @@ class FixingAiJob implements ShouldQueue
      */
     public function handle()
     {
-        DB::statement("SET sql_mode = '';");
-        DB::statement("SET GLOBAL sql_mode = '';");
+        DB::connection('mysqlsuper')->statement("SET sql_mode = '';");
+        DB::connection('mysqlsuper')->statement("SET GLOBAL sql_mode = '';");
     }
 }
