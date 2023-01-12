@@ -162,8 +162,8 @@ class ArsipController extends Controller
             }
         }
 
-        if (env('IS_HEROKU', true))
-            return 'server tidak mendukung preview';
+        // if (env('IS_HEROKU', true))
+        //     return 'server tidak mendukung preview';
 
         if ($arsip->berkas) {
 
@@ -172,9 +172,9 @@ class ArsipController extends Controller
 
             $file = Dropbox::files()->download($arsip->berkas . '/' . $arsip->nama_berkas);
             // $berkas = file_get_contents(\Storage::disk(config('dropbox.active'))->url($arsip->berkas));
-            $berkas = file_get_contents($file->getFile());
-            $preview_file = 'public/' . \Auth::user()->email . '/preview.pdf';
-            \Storage::put($preview_file, $berkas);
+            // $berkas = file_get_contents($file->getFile());
+            // $preview_file = 'public/' . \Auth::user()->email . '/preview.pdf';
+            // \Storage::put($preview_file, $berkas);
 
             $filename = 'preview.pdf';
             $headers = [
@@ -182,7 +182,8 @@ class ArsipController extends Controller
                 'Content-Disposition' => 'inline; filename="' . $filename . '"'
             ];
 
-            return response()->file(storage_path('app/' . $preview_file), $headers);
+            // return response()->file(storage_path('app/' . $preview_file), $headers);
+            return response()->file($file->getFile(), $headers);
         }
         abort(404);
     }
