@@ -1,7 +1,10 @@
 <?php
 
+namespace Database\Seeders;
+
 use Illuminate\Database\Seeder;
 use App\Models\Pengaturan;
+use Illuminate\Support\Facades\DB;
 
 class GeneratePengaturan extends Seeder
 {
@@ -14,7 +17,7 @@ class GeneratePengaturan extends Seeder
     {
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         DB::table('pengaturan')->truncate();
-    	$i = 1;
+        $i = 1;
         Pengaturan::create([
             'key'       => 'tahun',
             'value'     => '2020',
@@ -23,7 +26,8 @@ class GeneratePengaturan extends Seeder
         ]);
         Pengaturan::create([
             'key'       => 'nama_perusahaan',
-            'value'     => 'KSPSS NURURROHMAH AL BAROKAH',
+            // 'value'     => 'KSPSS NURURROHMAH AL BAROKAH',
+            'value'     => 'Nama Perusahaan',
             'ikon'      => 'fas fa-building',
             'label'     => 'Nama Perusahaan',
         ]);
@@ -62,7 +66,7 @@ class GeneratePengaturan extends Seeder
         ]);
         Pengaturan::create([
             'key'       => 'sidebar_mini',
-            'value'     => 'true',
+            'value'     => 'false',
             'label'     => 'Sidebar Mini',
             'form_type' => 'select',
             'pilihan'   => [
