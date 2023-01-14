@@ -248,9 +248,8 @@ class ArsipController extends Controller
         ];
         if ($request->file('berkas')) {
             $data = array_merge($data, $this->unggahBerkas($request, $jenis_dokumen));
-            if (Storage::disk(config('dropbox.active'))->exists($arsip->berkas)) {
-                Storage::disk(config('dropbox.active'))->delete($arsip->berkas);
-            }
+            $path = '/' . $arsip->berkas . '/' . $arsip->nama_berkas;
+            Dropbox::files()->delete($path);
         }
 
         $arsip->update($data);
@@ -273,9 +272,8 @@ class ArsipController extends Controller
             }
         }
         if ($arsip->berkas) {
-            if (Storage::disk(config('dropbox.active'))->exists($arsip->berkas)) {
-                Storage::disk(config('dropbox.active'))->delete($arsip->berkas);
-            }
+            $path = '/' . $arsip->berkas . '/' . $arsip->nama_berkas;
+            Dropbox::files()->delete($path);
         }
         $arsip->delete();
         $modul = \App\Models\Modul::where('nama', $jenis_dokumen)->first();
