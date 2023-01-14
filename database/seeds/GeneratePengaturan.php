@@ -102,7 +102,7 @@ class GeneratePengaturan extends Seeder
         // meta
         Pengaturan::create([
             'key'               => 'meta_description',
-            'value'             => 'KSPSS NURURROHMAH AL BAROKAH',
+            'value'             => 'Nama Perusahaan',
             'ikon'              => 'fas fa-globe',
             'label'             => 'Meta Description',
             'grup_label'        => 'Pengaturan Meta',
