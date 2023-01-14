@@ -99,6 +99,7 @@
                     <th>Ekstensi</th>
                     <th>Berkas</th>
                     <th>Keterangan</th>
+                    <th>Created At</th>
                     @if (Auth::user()->role == 'admin')
                       <th>Aksi</th>
                     @endif
@@ -141,6 +142,7 @@
                         @endif
                       </td>
                       <td>{{ $d->keterangan }}</td>
+                      <td>{{ $d->created_at }}</td>
                       @if (Auth::user()->role == 'admin')
                         <td>
                           <button class="btn btn-primary dropdown-toggle btn-sm" type="button" id="dropdownMenuButton{{ $loop->iteration }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
