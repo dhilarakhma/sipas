@@ -13,12 +13,12 @@ class GenerateAdmin extends Seeder
     public function run()
     {
         User::updateOrCreate([
-        	'id'	=> 1,
+            'id'    => 1,
         ], [
-        	'nama'			=> 'Hairul Anam',
-        	'email'			=> 'admin@admin.com',
-            'password'		=> bcrypt('admin'),
-            'avatar'        => asset('stisla/assets/img/avatar/avatar-1.png'),
+            'nama'     => 'Hairul Anam',
+            'email'    => 'superadmin@sipad.com',
+            'password' => bcrypt('superadmin'),
+            'avatar'   => asset('stisla/assets/img/avatar/avatar-1.png'),
         ]);
     }
 }

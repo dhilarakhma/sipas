@@ -38,7 +38,7 @@ class ArsipController extends Controller
 		$data = Arsip::where('jenis_dokumen_id', $jd->id);
 		if(\Auth::user()->role == 'admin')
 			$data = $data->where('kantor_id', \Auth::user()->kantor->id);
-		$tahun = $request->query('tahun');
+		$tahun = $request->query('tahun', date('Y'));
 		if($tahun)
 			$data = $data->whereYear('tanggal', $tahun)->orderBy('tanggal', 'DESC')->get();
 		else
@@ -136,7 +136,7 @@ class ArsipController extends Controller
 			return \Storage::disk(config('dropbox.active'))->download($arsip->berkas, $arsip->nama_berkas);
 		abort(404);
 	}
-	
+
 
 	public function preview($jenis_dokumen, Arsip $arsip, Request $request)
 	{
@@ -150,9 +150,9 @@ class ArsipController extends Controller
 				abort(404);
 			}
 		}
-		
-		if(env('IS_HEROKU', true))
-			return 'server tidak mendukung preview';
+
+		// if(env('IS_HEROKU', true))
+		// 	return 'server tidak mendukung preview';
 
 		if($arsip->berkas){
 
@@ -286,7 +286,7 @@ class ArsipController extends Controller
 		$data = $data->where('kantor_id', \Auth::user()->kantor->id);
 		if($tahun)
 			$data = $data->whereYear('tanggal', $tahun)->orderBy('tanggal', 'DESC')->get();
-		else 
+		else
 			$data = collect([]);
 		return [
 			'data'=>$data,
