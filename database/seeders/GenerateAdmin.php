@@ -18,8 +18,8 @@ class GenerateAdmin extends Seeder
             'id'    => 1,
         ], [
             'nama'     => 'Hairul Anam',
-            'email'    => 'admin@admin.com',
-            'password' => bcrypt('admin'),
+            'email'    => 'superadmin@sipad.com',
+            'password' => bcrypt('superadmin'),
             'avatar'   => asset('stisla/assets/img/avatar/avatar-1.png'),
         ]);
     }

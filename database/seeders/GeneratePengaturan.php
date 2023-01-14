@@ -26,7 +26,6 @@ class GeneratePengaturan extends Seeder
         ]);
         Pengaturan::create([
             'key'       => 'nama_perusahaan',
-            // 'value'     => 'KSPSS NURURROHMAH AL BAROKAH',
             'value'     => 'Nama Perusahaan',
             'ikon'      => 'fas fa-building',
             'label'     => 'Nama Perusahaan',
