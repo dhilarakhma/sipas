@@ -51,16 +51,15 @@ class ArsipController extends Controller
         $data = Arsip::where('jenis_dokumen_id', $jd->id);
         if (Auth::user()->role == 'admin')
             $data = $data->where('kantor_id', Auth::user()->kantor->id);
-        $tahun = $request->query('tahun');
+        $tahun = $request->query('tahun', date('Y'));
         if ($tahun)
-            $data = $data->whereYear('tanggal', $tahun)->orderBy('tanggal', 'DESC')->get();
+            $data = $data->whereYear('tanggal', $tahun)->orderBy('tanggal', 'DESC')->latest('id')->get();
         else
             $data = collect([]);
         $tahun = DB::table('arsip')->select(DB::raw('year(tanggal) as tahun'));
         if (Auth::user()->role == 'admin')
             $tahun = $tahun->where('kantor_id', Auth::user()->kantor->id);
-        $tahun = $tahun->where('jenis_dokumen_id', $jd->id)
-            ->get();
+        $tahun = $tahun->where('jenis_dokumen_id', $jd->id)->get();
         $tahun = collect($tahun)->pluck('tahun', 'tahun')->all();
         return view('stisla.arsip.index', [
             'data'               => $data,
