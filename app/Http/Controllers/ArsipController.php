@@ -14,7 +14,7 @@ class ArsipController extends Controller
 	public function __construct()
 	{
 		// $this->modul = \App\Models\Modul::where('nama', $this->jenis_dokumen)->first();
-		$this->middleware(\App\Http\Middleware\HanyaAdmin::class)->except('index', 'unduh', 'laporan', 'laporanPdf');
+		$this->middleware(\App\Http\Middleware\HanyaAdmin::class)->except('index', 'unduh', 'laporan', 'laporanPdf', 'preview');
 	}
 
 	private function unggahBerkas(Request $request, String $jenis_dokumen)
