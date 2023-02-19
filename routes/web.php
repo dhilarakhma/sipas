@@ -12,4 +12,7 @@ Route::middleware(\App\Http\Middleware\Masuk::class)->group(function(){
     Route::put('/arsip/{jenis_dokumen}/perbarui/{arsip}', 'ArsipController@update')->name('arsip.update');
     Route::delete('/arsip/{jenis_dokumen}/hapus/{arsip}', 'ArsipController@destroy')->name('arsip.destroy');
     Route::resource('kantor', 'KantorController')->middleware(\App\Http\Middleware\HanyaSuperAdmin::class);
+    Route::get('/phpinfo', function(){
+        phpinfo();
+    });
 });
