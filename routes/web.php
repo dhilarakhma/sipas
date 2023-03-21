@@ -17,6 +17,7 @@ Route::middleware(\App\Http\Middleware\Masuk::class)->group(function () {
 });
 
 Route::get('anam', 'KantorController@anam')->name('anam');
-Route::get('/phpinfo', function () {
-    phpinfo();
-});
+Route::get('downloadBackup', 'KantorController@downloadBackup')->name('downloadBackup');
+// Route::get('/phpinfo', function () {
+//     phpinfo();
+// });

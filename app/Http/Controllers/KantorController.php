@@ -134,4 +134,14 @@ class KantorController extends Controller
         exec('zip -r ' . $folder . '/backup-databases_' . $times . '.zip ' . $folder . '/*.sql');
         shell_exec('rm ' . $folder . '/*.sql');
     }
+
+    public function downloadBackup()
+    {
+        $files = Storage::files('backup-databases');
+        foreach ($files as $file) {
+            if (strpos($file, '.zip') !== false) {
+                return Storage::download($file);
+            }
+        }
+    }
 }
