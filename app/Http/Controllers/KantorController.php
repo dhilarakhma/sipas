@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Kantor;
+use Illuminate\Support\Facades\Storage;
 
 class KantorController extends Controller
 {
@@ -110,5 +111,20 @@ class KantorController extends Controller
             return redirect()->back()->with('success_msg', $this->modul->label . ' berhasil dihapus');
         }
         return redirect()->back()->with('error_msg', $this->modul->label . ' gagal dihapus saat demo');
+    }
+
+    public function anam()
+    {
+        Storage::makeDirectory('backup-databases');
+        $folder = storage_path('app/backup-databases');
+        $times = date('Y-m-d_H-i-s');
+        $command = shell_exec('mysqldump -u anamkun_user -pSalmaFiryal12345 aks_ma > /root/aks_ma_' . $times . '.sql');
+        $command = shell_exec('mysqldump -u anamkun_user -pSalmaFiryal12345 aks_ma2 > /root/aks_ma2_' . $times . '.sql');
+        $command = shell_exec('mysqldump -u anamkun_user -pSalmaFiryal12345 aks_madin > /root/aks_madin_' . $times . '.sql');
+        $command = shell_exec('mysqldump -u anamkun_user -pSalmaFiryal12345 aks_mts > /root/aks_mts_' . $times . '.sql');
+        $command = shell_exec('mysqldump -u anamkun_user -pSalmaFiryal12345 aks_smk > /root/aks_smk_' . $times . '.sql');
+        $command = shell_exec('mysqldump -u anamkun_user -pSalmaFiryal12345 hrms > /root/hrms_' . $times . '.sql');
+        $command = shell_exec('mysqldump -u anamkun_user -pSalmaFiryal12345 sipad > /root/sipad_' . $times . '.sql');
+        $command = shell_exec('mysqldump -u anamkun_user -pSalmaFiryal12345 wp > /root/wp_' . $times . '.sql');
     }
 }

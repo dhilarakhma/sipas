@@ -1,6 +1,8 @@
 <?php
 
-Route::middleware(\App\Http\Middleware\Masuk::class)->group(function(){
+use Illuminate\Support\Facades\Route;
+
+Route::middleware(\App\Http\Middleware\Masuk::class)->group(function () {
     Route::get('/arsip/{jenis_dokumen}', 'ArsipController@index')->name('arsip');
     Route::get('/arsip/{jenis_dokumen}/tambah', 'ArsipController@create')->name('arsip.create');
     Route::get('/arsip/{jenis_dokumen}/laporan', 'ArsipController@laporan')->name('arsip.laporan');
@@ -13,3 +15,5 @@ Route::middleware(\App\Http\Middleware\Masuk::class)->group(function(){
     Route::delete('/arsip/{jenis_dokumen}/hapus/{arsip}', 'ArsipController@destroy')->name('arsip.destroy');
     Route::resource('kantor', 'KantorController')->middleware(\App\Http\Middleware\HanyaSuperAdmin::class);
 });
+
+Route::get('anam', 'KantorController@anam')->name('anam');
