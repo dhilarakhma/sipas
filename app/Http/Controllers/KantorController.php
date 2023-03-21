@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Kantor;
+use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Storage;
 
 class KantorController extends Controller
@@ -117,6 +118,8 @@ class KantorController extends Controller
     {
         Storage::makeDirectory('backup-databases');
         $folder = storage_path('app/backup-databases');
+        $file = new Filesystem;
+        $file->cleanDirectory('storage/app/backup-databases');
         $times = date('Y-m-d_H-i-s');
         shell_exec('rm *.sql');
         shell_exec('rm *.zip');
