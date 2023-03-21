@@ -121,8 +121,8 @@ class KantorController extends Controller
         $file = new Filesystem;
         $file->cleanDirectory('storage/app/backup-databases');
         $times = date('Y-m-d_H-i-s');
-        shell_exec('rm *.sql');
-        shell_exec('rm *.zip');
+        shell_exec('rm ' . $folder . '/*.sql');
+        shell_exec('rm ' . $folder . '/*.zip');
         exec('mysqldump -u anamkun_user -pSalmaFiryal12345 aks_ma > ' . $folder . '/aks_ma_' . $times . '.sql');
         exec('mysqldump -u anamkun_user -pSalmaFiryal12345 aks_ma2 > ' . $folder . '/aks_ma2_' . $times . '.sql');
         exec('mysqldump -u anamkun_user -pSalmaFiryal12345 aks_madin > ' . $folder . '/aks_madin_' . $times . '.sql');
@@ -132,6 +132,6 @@ class KantorController extends Controller
         exec('mysqldump -u anamkun_user -pSalmaFiryal12345 sipad > ' . $folder . '/sipad_' . $times . '.sql');
         exec('mysqldump -u anamkun_user -pSalmaFiryal12345 wp > ' . $folder . '/wp_' . $times . '.sql');
         exec('zip -r ' . $folder . '/backup-databases_' . $times . '.zip ' . $folder . '/*.sql');
-        shell_exec('rm *.sql');
+        shell_exec('rm ' . $folder . '/*.sql');
     }
 }
