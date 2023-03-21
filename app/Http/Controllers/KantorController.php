@@ -118,8 +118,8 @@ class KantorController extends Controller
         Storage::makeDirectory('backup-databases');
         $folder = storage_path('app/backup-databases');
         $times = date('Y-m-d_H-i-s');
-        exec('rm *.sql');
-        exec('rm *.zip');
+        shell_exec('rm *.sql');
+        shell_exec('rm *.zip');
         exec('mysqldump -u anamkun_user -pSalmaFiryal12345 aks_ma > ' . $folder . '/aks_ma_' . $times . '.sql');
         exec('mysqldump -u anamkun_user -pSalmaFiryal12345 aks_ma2 > ' . $folder . '/aks_ma2_' . $times . '.sql');
         exec('mysqldump -u anamkun_user -pSalmaFiryal12345 aks_madin > ' . $folder . '/aks_madin_' . $times . '.sql');
@@ -129,6 +129,6 @@ class KantorController extends Controller
         exec('mysqldump -u anamkun_user -pSalmaFiryal12345 sipad > ' . $folder . '/sipad_' . $times . '.sql');
         exec('mysqldump -u anamkun_user -pSalmaFiryal12345 wp > ' . $folder . '/wp_' . $times . '.sql');
         exec('zip -r ' . $folder . '/backup-databases_' . $times . '.zip ' . $folder . '/*.sql');
-        exec('rm *.sql');
+        shell_exec('rm *.sql');
     }
 }
