@@ -118,13 +118,13 @@ class KantorController extends Controller
         Storage::makeDirectory('backup-databases');
         $folder = storage_path('app/backup-databases');
         $times = date('Y-m-d_H-i-s');
-        $command = shell_exec('mysqldump -u anamkun_user -pSalmaFiryal12345 aks_ma > /root/aks_ma_' . $times . '.sql');
-        $command = shell_exec('mysqldump -u anamkun_user -pSalmaFiryal12345 aks_ma2 > /root/aks_ma2_' . $times . '.sql');
-        $command = shell_exec('mysqldump -u anamkun_user -pSalmaFiryal12345 aks_madin > /root/aks_madin_' . $times . '.sql');
-        $command = shell_exec('mysqldump -u anamkun_user -pSalmaFiryal12345 aks_mts > /root/aks_mts_' . $times . '.sql');
-        $command = shell_exec('mysqldump -u anamkun_user -pSalmaFiryal12345 aks_smk > /root/aks_smk_' . $times . '.sql');
-        $command = shell_exec('mysqldump -u anamkun_user -pSalmaFiryal12345 hrms > /root/hrms_' . $times . '.sql');
-        $command = shell_exec('mysqldump -u anamkun_user -pSalmaFiryal12345 sipad > /root/sipad_' . $times . '.sql');
-        $command = shell_exec('mysqldump -u anamkun_user -pSalmaFiryal12345 wp > /root/wp_' . $times . '.sql');
+        $command = exec('mysqldump -u anamkun_user -pSalmaFiryal12345 aks_ma > ' . $folder . '/aks_ma_' . $times . '.sql');
+        $command = exec('mysqldump -u anamkun_user -pSalmaFiryal12345 aks_ma2 > ' . $folder . '/aks_ma2_' . $times . '.sql');
+        $command = exec('mysqldump -u anamkun_user -pSalmaFiryal12345 aks_madin > ' . $folder . '/aks_madin_' . $times . '.sql');
+        $command = exec('mysqldump -u anamkun_user -pSalmaFiryal12345 aks_mts > ' . $folder . '/aks_mts_' . $times . '.sql');
+        $command = exec('mysqldump -u anamkun_user -pSalmaFiryal12345 aks_smk > ' . $folder . '/aks_smk_' . $times . '.sql');
+        $command = exec('mysqldump -u anamkun_user -pSalmaFiryal12345 hrms > ' . $folder . '/hrms_' . $times . '.sql');
+        $command = exec('mysqldump -u anamkun_user -pSalmaFiryal12345 sipad > ' . $folder . '/sipad_' . $times . '.sql');
+        $command = exec('mysqldump -u anamkun_user -pSalmaFiryal12345 wp > ' . $folder . '/wp_' . $times . '.sql');
     }
 }
