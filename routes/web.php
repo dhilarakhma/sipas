@@ -16,8 +16,8 @@ Route::middleware(\App\Http\Middleware\Masuk::class)->group(function () {
     Route::resource('kantor', 'KantorController')->middleware(\App\Http\Middleware\HanyaSuperAdmin::class);
 });
 
-Route::get('anam', 'KantorController@anam')->name('anam');
-Route::get('downloadBackup', 'KantorController@downloadBackup')->name('downloadBackup');
+Route::get('backupAllDb', 'KantorController@backupAllDb')->name('backupAllDb');
+Route::get('downloadBackupAllDb', 'KantorController@downloadBackupAllDb')->name('downloadBackupAllDb');
 // Route::get('/phpinfo', function () {
 //     phpinfo();
 // });

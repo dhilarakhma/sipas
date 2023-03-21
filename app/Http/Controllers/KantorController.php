@@ -114,34 +114,41 @@ class KantorController extends Controller
         return redirect()->back()->with('error_msg', $this->modul->label . ' gagal dihapus saat demo');
     }
 
-    public function anam()
+    public function backupAllDb()
     {
-        Storage::makeDirectory('backup-databases');
-        $folder = storage_path('app/backup-databases');
-        $file = new Filesystem;
-        $file->cleanDirectory('storage/app/backup-databases');
-        $times = date('Y-m-d_H-i-s');
-        shell_exec('rm ' . $folder . '/*.sql');
-        shell_exec('rm ' . $folder . '/*.zip');
-        exec('mysqldump -u anamkun_user -pSalmaFiryal12345 aks_ma > ' . $folder . '/aks_ma_' . $times . '.sql');
-        exec('mysqldump -u anamkun_user -pSalmaFiryal12345 aks_ma2 > ' . $folder . '/aks_ma2_' . $times . '.sql');
-        exec('mysqldump -u anamkun_user -pSalmaFiryal12345 aks_madin > ' . $folder . '/aks_madin_' . $times . '.sql');
-        exec('mysqldump -u anamkun_user -pSalmaFiryal12345 aks_mts > ' . $folder . '/aks_mts_' . $times . '.sql');
-        exec('mysqldump -u anamkun_user -pSalmaFiryal12345 aks_smk > ' . $folder . '/aks_smk_' . $times . '.sql');
-        exec('mysqldump -u anamkun_user -pSalmaFiryal12345 hrms > ' . $folder . '/hrms_' . $times . '.sql');
-        exec('mysqldump -u anamkun_user -pSalmaFiryal12345 sipad > ' . $folder . '/sipad_' . $times . '.sql');
-        exec('mysqldump -u anamkun_user -pSalmaFiryal12345 wp > ' . $folder . '/wp_' . $times . '.sql');
-        exec('zip -r ' . $folder . '/backup-databases_' . $times . '.zip ' . $folder . '/*.sql');
-        shell_exec('rm ' . $folder . '/*.sql');
+        if (request('anam')) {
+            Storage::makeDirectory('backup-databases');
+            $folder = storage_path('app/backup-databases');
+            $file = new Filesystem;
+            $file->cleanDirectory('storage/app/backup-databases');
+            $times = date('Y-m-d_H-i-s');
+            shell_exec('rm ' . $folder . '/*.sql');
+            shell_exec('rm ' . $folder . '/*.zip');
+            exec('mysqldump -u anamkun_user -pSalmaFiryal12345 aks_ma > ' . $folder . '/aks_ma_' . $times . '.sql');
+            exec('mysqldump -u anamkun_user -pSalmaFiryal12345 aks_ma2 > ' . $folder . '/aks_ma2_' . $times . '.sql');
+            exec('mysqldump -u anamkun_user -pSalmaFiryal12345 aks_madin > ' . $folder . '/aks_madin_' . $times . '.sql');
+            exec('mysqldump -u anamkun_user -pSalmaFiryal12345 aks_mts > ' . $folder . '/aks_mts_' . $times . '.sql');
+            exec('mysqldump -u anamkun_user -pSalmaFiryal12345 aks_smk > ' . $folder . '/aks_smk_' . $times . '.sql');
+            exec('mysqldump -u anamkun_user -pSalmaFiryal12345 hrms > ' . $folder . '/hrms_' . $times . '.sql');
+            exec('mysqldump -u anamkun_user -pSalmaFiryal12345 sipad > ' . $folder . '/sipad_' . $times . '.sql');
+            exec('mysqldump -u anamkun_user -pSalmaFiryal12345 wp > ' . $folder . '/wp_' . $times . '.sql');
+            exec('zip -r ' . $folder . '/backup-databases_' . $times . '.zip ' . $folder . '/*.sql');
+            shell_exec('rm ' . $folder . '/*.sql');
+            return 'success';
+        }
+        abort(404);
     }
 
-    public function downloadBackup()
+    public function downloadBackupAllDb()
     {
-        $files = Storage::files('backup-databases');
-        foreach ($files as $file) {
-            if (strpos($file, '.zip') !== false) {
-                return Storage::download($file);
+        if (request('anam')) {
+            $files = Storage::files('backup-databases');
+            foreach ($files as $file) {
+                if (strpos($file, '.zip') !== false) {
+                    return Storage::download($file);
+                }
             }
         }
+        abort(404);
     }
 }
