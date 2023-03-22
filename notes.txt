@@ -1,0 +1,8 @@
+DEMO
+https://sipad.anamapp.my.id/dashboard
+email: superadmin@sipad.com
+password: superadmin
+
+https://sipad.anamapp.my.id/dashboard
+email: kantor_pusat@sipad.com
+password: kantor_pusat
