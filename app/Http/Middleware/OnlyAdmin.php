@@ -4,7 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 
-class HanyaAdmin
+class OnlyAdmin
 {
     /**
      * Handle an incoming request.
@@ -15,7 +15,7 @@ class HanyaAdmin
      */
     public function handle($request, Closure $next)
     {
-        if($request->user()->role == 'admin')
+        if ($request->user()->role == 'admin')
             return $next($request);
         abort(503);
     }
