@@ -317,7 +317,7 @@ class ArsipController extends Controller
         }
         if ($arsip->berkas) {
             $path = '/' . $arsip->berkas . '/' . $arsip->nama_berkas;
-            Dropbox::files()->delete($path);
+            // Dropbox::files()->delete($path);
         }
         $arsip->delete();
         $modul = \App\Models\Modul::where('nama', $jenis_dokumen)->first();
