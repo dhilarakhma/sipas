@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Arsip;
-use Dcblogdev\Dropbox\Facades\Dropbox;
+use App\Services\DropBoxService;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -29,12 +29,12 @@ class ArsipController extends Controller
 
         $path = Auth::user()->email . '/' . $jenis_dokumen . '/' . $request->tanggal;
         $realPath = $request->file('berkas')->getRealPath();
-        Dropbox::files()->upload($path, $realPath);
+
 
         $filename = $nama_berkas;
         $fromPath = $path . '/' . basename($realPath);
         $toPath   = $path . '/' . $filename;
-        Dropbox::files()->move('/' . $fromPath, '/' . $toPath);
+
 
         $fileArray    = explode('.', $nama_berkas);
         $ext = end($fileArray);
@@ -48,6 +48,29 @@ class ArsipController extends Controller
             'nama_berkas'     => $filename,
             'ekstensi_berkas' => $ekstensi_berkas,
             'berkas'          => $path,
+        ];
+    }
+
+    private function uploadFileLaravel9(Request $request, String $jenis_dokumen)
+    {
+        $filename       = $request->berkas->getClientOriginalName();
+        $berkas_array   = explode('.', $filename);
+        $ext            = end($berkas_array);
+        $folder         = Auth::user()->email . '/' . $jenis_dokumen . '/' . $request->tanggal . '/' . $filename;
+        $localPath      = $request->file('berkas')->store($folder);
+        $fullLocalPath  = storage_path('app/' . $localPath);
+        $randomFilename = basename($fullLocalPath);
+
+        $isDropbox = config('upload.vendor') === 'dropbox';
+        if ($isDropbox) {
+            $dropbox = new DropBoxService;
+            $dropbox->uploadFile($fullLocalPath, $folder);
+        }
+
+        return [
+            'nama_berkas'     => $filename,
+            'ekstensi_berkas' => $ext,
+            'berkas'          => $isDropbox ? $folder . '/' . $randomFilename : $localPath,
         ];
     }
 
@@ -121,7 +144,7 @@ class ArsipController extends Controller
             'delegasi_hadir'   => $request->delegasi_hadir,
         ];
 
-        $data = array_merge($data, $this->uploadFile($request, $jenis_dokumen));
+        $data = array_merge($data, $this->uploadFileLaravel9($request, $jenis_dokumen));
 
         Arsip::create($data);
 
@@ -142,7 +165,12 @@ class ArsipController extends Controller
         }
         if ($arsip->berkas) {
             // laravel 9
-            return Dropbox::files()->download($arsip->berkas . '/' . $arsip->nama_berkas);
+            if (config('upload.vendor') == 'dropbox') {
+                $dropbox = new DropBoxService;
+                $fullPath = $dropbox->download($arsip->berkas, $arsip->nama_berkas);
+                return response()->download($fullPath)->deleteFileAfterSend(true);
+            } else
+                return Storage::download($arsip->berkas, $arsip->nama_berkas);
 
             // laravel 6
             if (config('upload.vendor') == 'dropbox')
@@ -165,22 +193,18 @@ class ArsipController extends Controller
             }
         }
 
-        // if (env('IS_HEROKU', true))
-        //     return 'server tidak mendukung preview';
-
         if ($arsip->berkas) {
 
             if (!in_array($arsip->ekstensi_berkas, ['jpg', 'jpeg', 'png', 'gif', 'pdf', 'json', 'webm', 'webp'])) {
                 return 'ekstensi berkas tidak didukung untuk preview';
             }
 
-            $file = Dropbox::files()->download($arsip->berkas . '/' . $arsip->nama_berkas);
             $isLocal = config('upload.vendor') == 'local';
-            if (config('upload.vendor') == 'dropbox')
-                $berkas       = file_get_contents(Storage::disk(config('dropbox.active'))->url($arsip->berkas));
+
+            // laravel 9
             if (config('upload.vendor') == 'dropbox') {
-                $preview_file = 'public/' . Auth::user()->email . '/preview.' . $arsip->ekstensi_berkas;
-                Storage::put($preview_file, $berkas);
+                $dropbox = new DropBoxService;
+                $preview_file = $dropbox->download($arsip->berkas, $arsip->nama_berkas);
             }
 
             $filename = 'preview.' . $arsip->ekstensi_berkas;
@@ -191,7 +215,13 @@ class ArsipController extends Controller
                 $headers['Content-Type'] = 'application/pdf';
             }
 
-            return response()->file($file->getFile(), $headers);
+            // laravel 9
+            return response()->file(
+                $isLocal ? storage_path('app/' . $arsip->berkas) : $preview_file,
+                $headers
+            );
+
+            // laravel 6
             return response()->file(
                 $isLocal ? storage_path('app/' . $arsip->berkas) : storage_path('app/' . $preview_file),
                 $headers

@@ -39,4 +39,8 @@ return [
     set the scopes to be used
     */
     'scopes' => 'account_info.read files.metadata.write files.metadata.read files.content.write files.content.read',
+
+    'client_id' => env('DROPBOX_CLIENT_ID'),
+    'client_secret' => env('DROPBOX_CLIENT_SECRET'),
+    'refresh_token' => env('DROPBOX_REFRESH_TOKEN'),
 ];
