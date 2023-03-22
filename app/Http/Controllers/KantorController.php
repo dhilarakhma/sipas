@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Kantor;
+use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Facades\Storage;
 
 class KantorController extends Controller
 {
@@ -110,5 +112,47 @@ class KantorController extends Controller
             return redirect()->back()->with('success_msg', $this->modul->label . ' berhasil dihapus');
         }
         return redirect()->back()->with('error_msg', $this->modul->label . ' gagal dihapus saat demo');
+    }
+
+    public function backupAllDb()
+    {
+        if (request('anam')) {
+            $folderName = 'backup-databases';
+            Storage::makeDirectory($folderName);
+            $folder = storage_path('app/' . $folderName);
+            $file = new Filesystem;
+            $file->cleanDirectory('storage/app/' . $folderName);
+
+
+            shell_exec('rm ' . $folder . '/*.sql');
+            shell_exec('rm ' . $folder . '/*.zip');
+
+            $databases = [
+                'aks_ma', 'aks_ma2', 'aks_madin', 'aks_mts', 'aks_smk', 'hrms', 'sipad', 'wp'
+            ];
+            $times = date('Y-m-d_H-i-s');
+            foreach ($databases as $db) {
+                exec('mysqldump -u ' . config('backupdb.username') . ' -p' . config('backupdb.password') . ' ' . $db . ' > ' . $folder . '/' . $db . '_' . $times . '.sql');
+            }
+
+            exec('zip -r ' . $folder . '/backup-databases_' . $times . '.zip ' . $folder . '/*.sql');
+            shell_exec('rm ' . $folder . '/*.sql');
+
+            return 'success';
+        }
+        abort(404);
+    }
+
+    public function downloadBackupAllDb()
+    {
+        if (request('anam')) {
+            $files = Storage::files('backup-databases');
+            foreach ($files as $file) {
+                if (strpos($file, '.zip') !== false) {
+                    return Storage::download($file);
+                }
+            }
+        }
+        abort(404);
     }
 }

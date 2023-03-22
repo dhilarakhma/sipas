@@ -36,6 +36,12 @@ class ArsipController extends Controller
         $toPath   = $path . '/' . $filename;
         Dropbox::files()->move('/' . $fromPath, '/' . $toPath);
 
+        $path            = Auth::user()->email . '/' . $jenis_dokumen . '/' . $request->tanggal . '/' . $nama_berkas;
+        if (config('upload.vendor') == 'dropbox')
+            $path            = $request->file('berkas')->store($path, config('dropbox.active'));
+        else
+            $path            = $request->file('berkas')->store($path);
+
         return [
             'nama_berkas'     => $filename,
             'ekstensi_berkas' => $ekstensi_berkas,
@@ -45,22 +51,18 @@ class ArsipController extends Controller
 
     public function index($jenis_dokumen, Request $request)
     {
-        $jd = \App\JenisDokumen::where('route', $jenis_dokumen)->first();
-        if (!$jd)
-            abort(404);
+        $jd = \App\JenisDokumen::where('route', $jenis_dokumen)->firstOrFail();
         $data = Arsip::where('jenis_dokumen_id', $jd->id);
         if (Auth::user()->role == 'admin')
             $data = $data->where('kantor_id', Auth::user()->kantor->id);
-        $tahun = $request->query('tahun', date('Y'));
-        if ($tahun)
-            $data = $data->whereYear('tanggal', $tahun)->orderBy('tanggal', 'DESC')->latest('id')->get();
-        else
-            $data = collect([]);
-        $tahun = DB::table('arsip')->select(DB::raw('year(tanggal) as tahun'));
+        $year = $request->query('tahun', date('Y'));
+        $data = $data->whereYear('tanggal', $year)->orderBy('tanggal', 'DESC')->latest()->get();
+        $year = DB::table('arsip')->select(DB::raw('year(tanggal) as tahun'));
         if (Auth::user()->role == 'admin')
-            $tahun = $tahun->where('kantor_id', Auth::user()->kantor->id);
-        $tahun = $tahun->where('jenis_dokumen_id', $jd->id)->get();
-        $tahun = collect($tahun)->pluck('tahun', 'tahun')->all();
+            $year = $year->where('kantor_id', Auth::user()->kantor->id);
+        $year = $year->where('jenis_dokumen_id', $jd->id)->get();
+        $year = collect($year)->pluck('tahun', 'tahun')->all();
+
         return view('stisla.arsip.index', [
             'data'               => $data,
             'active'             => 'arsip/' . $jenis_dokumen,
@@ -68,15 +70,13 @@ class ArsipController extends Controller
             'action_tambah'      => route('arsip.create', [$jenis_dokumen]),
             'action_laporan'     => route('arsip.laporan', [$jenis_dokumen]),
             'action_laporan_pdf' => route('arsip.laporan.pdf', [$jenis_dokumen]),
-            'tahun'              => $tahun,
+            'tahun'              => $year,
         ]);
     }
 
     public function create($jenis_dokumen)
     {
-        $jd = \App\JenisDokumen::where('route', $jenis_dokumen)->first();
-        if (!$jd)
-            abort(404);
+        $jd = \App\JenisDokumen::where('route', $jenis_dokumen)->firstOrFail();
         return view('stisla.arsip.tambah', [
             'action'        => route('arsip.store', [$jenis_dokumen]),
             'active'        => 'arsip/' . $jenis_dokumen,
@@ -87,9 +87,7 @@ class ArsipController extends Controller
 
     public function store($jenis_dokumen, Request $request)
     {
-        $jd = \App\JenisDokumen::where('route', $jenis_dokumen)->first();
-        if (!$jd)
-            abort(404);
+        $jd = \App\JenisDokumen::where('route', $jenis_dokumen)->firstOrFail();
         $rules = [
             'no_surat'    => 'required',
             'judul_surat' => 'required',
@@ -132,9 +130,7 @@ class ArsipController extends Controller
 
     public function unduh($jenis_dokumen, Arsip $arsip)
     {
-        $jd = \App\JenisDokumen::where('route', $jenis_dokumen)->first();
-        if (!$jd)
-            abort(404);
+        $jd = \App\JenisDokumen::where('route', $jenis_dokumen)->firstOrFail();
         if ($arsip->jenis_dokumen_id != $jd->id)
             abort(404);
         if (Auth::user()->role == 'admin') {
@@ -143,8 +139,14 @@ class ArsipController extends Controller
             }
         }
         if ($arsip->berkas) {
+            // laravel 9
             return Dropbox::files()->download($arsip->berkas . '/' . $arsip->nama_berkas);
-            return Storage::disk(config('dropbox.active'))->download($arsip->berkas, $arsip->nama_berkas);
+
+            // laravel 6
+            if (config('upload.vendor') == 'dropbox')
+                return Storage::disk(config('dropbox.active'))->download($arsip->berkas, $arsip->nama_berkas);
+            else
+                return Storage::download($arsip->berkas, $arsip->nama_berkas);
         }
         abort(404);
     }
@@ -152,9 +154,7 @@ class ArsipController extends Controller
 
     public function preview($jenis_dokumen, Arsip $arsip, Request $request)
     {
-        $jd = \App\JenisDokumen::where('route', $jenis_dokumen)->first();
-        if (!$jd)
-            abort(404);
+        $jd = \App\JenisDokumen::where('route', $jenis_dokumen)->firstOrFail();
         if ($arsip->jenis_dokumen_id != $jd->id)
             abort(404);
         if (Auth::user()->role == 'admin') {
@@ -168,27 +168,39 @@ class ArsipController extends Controller
 
         if ($arsip->berkas) {
 
-            if ($arsip->ekstensi_berkas != 'pdf')
+            if (!in_array($arsip->ekstensi_berkas, ['jpg', 'jpeg', 'png', 'gif', 'pdf', 'json', 'webm', 'webp'])) {
                 return 'ekstensi berkas tidak didukung untuk preview';
+            }
 
             $file = Dropbox::files()->download($arsip->berkas . '/' . $arsip->nama_berkas);
+            $isLocal = config('upload.vendor') == 'local';
+            if (config('upload.vendor') == 'dropbox')
+                $berkas       = file_get_contents(Storage::disk(config('dropbox.active'))->url($arsip->berkas));
+            if (config('upload.vendor') == 'dropbox') {
+                $preview_file = 'public/' . Auth::user()->email . '/preview.' . $arsip->ekstensi_berkas;
+                Storage::put($preview_file, $berkas);
+            }
 
-            $filename = 'preview.pdf';
+            $filename = 'preview.' . $arsip->ekstensi_berkas;
             $headers = [
-                'Content-Type'        => 'application/pdf',
                 'Content-Disposition' => 'inline; filename="' . $filename . '"'
             ];
+            if ($arsip->ekstensi_berkas === 'pdf') {
+                $headers['Content-Type'] = 'application/pdf';
+            }
 
             return response()->file($file->getFile(), $headers);
+            return response()->file(
+                $isLocal ? storage_path('app/' . $arsip->berkas) : storage_path('app/' . $preview_file),
+                $headers
+            );
         }
         abort(404);
     }
 
     public function edit($jenis_dokumen, Arsip $arsip)
     {
-        $jd = \App\JenisDokumen::where('route', $jenis_dokumen)->first();
-        if (!$jd)
-            abort(404);
+        $jd = \App\JenisDokumen::where('route', $jenis_dokumen)->firstOrFail();
         if ($arsip->jenis_dokumen_id != $jd->id)
             abort(404);
         if (Auth::user()->role == 'admin') {
@@ -206,9 +218,7 @@ class ArsipController extends Controller
 
     public function update(Request $request, $jenis_dokumen, Arsip $arsip)
     {
-        $jd = \App\JenisDokumen::where('route', $jenis_dokumen)->first();
-        if (!$jd)
-            abort(404);
+        $jd = \App\JenisDokumen::where('route', $jenis_dokumen)->firstOrFail();
         if ($arsip->jenis_dokumen_id != $jd->id)
             abort(404);
         if (Auth::user()->role == 'admin') {
@@ -261,9 +271,7 @@ class ArsipController extends Controller
 
     public function destroy($jenis_dokumen, Arsip $arsip)
     {
-        $jd = \App\JenisDokumen::where('route', $jenis_dokumen)->first();
-        if (!$jd)
-            abort(404);
+        $jd = \App\JenisDokumen::where('route', $jenis_dokumen)->firstOrFail();
         if ($arsip->jenis_dokumen_id != $jd->id)
             abort(404);
         if (Auth::user()->role == 'admin') {
@@ -282,11 +290,9 @@ class ArsipController extends Controller
 
     private function getData($jenis_dokumen, $request)
     {
-        $jd = \App\JenisDokumen::where('route', $jenis_dokumen)->first();
-        if (!$jd)
-            abort(404);
+        $jd    = \App\JenisDokumen::where('route', $jenis_dokumen)->firstOrFail();
         $tahun = $request->query('tahun');
-        $data = Arsip::where('jenis_dokumen_id', $jd->id);
+        $data  = Arsip::where('jenis_dokumen_id', $jd->id);
         if (Auth::user()->role == 'admin')
             $data = $data->where('kantor_id', Auth::user()->kantor->id);
         if ($tahun)
