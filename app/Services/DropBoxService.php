@@ -194,7 +194,7 @@ class DropBoxService
     {
         $path = '/' . $path;
         $path = str_replace('//', '/', $path);
-        dd($path);
+        // dd($path);
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
@@ -215,7 +215,7 @@ class DropBoxService
         ));
 
         $response = curl_exec($curl);
-        dd($response);
+        // dd($response);
 
         Storage::put('public/dropboxs/' . $filename, $response);
 
