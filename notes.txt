@@ -6,3 +6,5 @@ password: superadmin
 https://sipad.anamapp.my.id/dashboard
 email: kantor_pusat@sipad.com
 password: kantor_pusat
+
+cd /var/www/sipad && git pull
