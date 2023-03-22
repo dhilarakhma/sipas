@@ -17,14 +17,14 @@ class ArsipController extends Controller
 
     public function __construct()
     {
-        $this->middleware(\App\Http\Middleware\HanyaAdmin::class)->except('index', 'unduh', 'laporan', 'laporanPdf', 'preview');
+        $this->middleware(\App\Http\Middleware\OnlyAdmin::class)->except('index', 'unduh', 'laporan', 'laporanPdf', 'preview');
     }
 
-    private function unggahBerkas(Request $request, String $jenis_dokumen)
+    private function uploadFile(Request $request, String $jenis_dokumen)
     {
         $nama_berkas     = $request->berkas->getClientOriginalName();
-        $berkas_array    = explode('.', $nama_berkas);
-        $ekstensi_berkas = end($berkas_array);
+        $fileArray    = explode('.', $nama_berkas);
+        $ext = end($fileArray);
         $path            = Auth::user()->email . '/' . $jenis_dokumen . '/' . $request->tanggal . '/' . $nama_berkas;
         if (config('upload.vendor') == 'dropbox')
             $path            = $request->file('berkas')->store($path, config('dropbox.active'));
@@ -32,7 +32,7 @@ class ArsipController extends Controller
             $path            = $request->file('berkas')->store($path);
         return [
             'nama_berkas'     => $nama_berkas,
-            'ekstensi_berkas' => $ekstensi_berkas,
+            'ekstensi_berkas' => $ext,
             'berkas'          => $path,
         ];
     }
@@ -107,7 +107,7 @@ class ArsipController extends Controller
             'delegasi_hadir'   => $request->delegasi_hadir,
         ];
 
-        $data = array_merge($data, $this->unggahBerkas($request, $jenis_dokumen));
+        $data = array_merge($data, $this->uploadFile($request, $jenis_dokumen));
 
         Arsip::create($data);
 
@@ -236,7 +236,7 @@ class ArsipController extends Controller
             'delegasi_hadir'   => $request->delegasi_hadir,
         ];
         if ($request->file('berkas')) {
-            $data = array_merge($data, $this->unggahBerkas($request, $jenis_dokumen));
+            $data = array_merge($data, $this->uploadFile($request, $jenis_dokumen));
             if (Storage::disk(config('dropbox.active'))->exists($arsip->berkas)) {
                 Storage::disk(config('dropbox.active'))->delete($arsip->berkas);
             }
