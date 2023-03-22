@@ -214,6 +214,7 @@ class DropBoxService
         ));
 
         $response = curl_exec($curl);
+        dd($response);
 
         Storage::put('public/dropboxs/' . $filename, $response);
 
