@@ -194,6 +194,7 @@ class DropBoxService
     {
         $path = '/' . $path;
         $path = str_replace('//', '/', $path);
+        dd($path);
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
