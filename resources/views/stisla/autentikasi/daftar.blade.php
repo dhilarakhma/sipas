@@ -30,22 +30,23 @@
               <p class="text-muted">Sebelum memulai, anda harus masuk terlebih dahulu dengan akun anda.
               </p>
             </div>
-            <form method="POST" action="{{ route('masuk') }}" class="needs-validation" novalidate="">
+            <form method="POST" action="{{ route('daftar') }}" class="needs-validation" novalidate="">
               @csrf
+              @input(['type' => 'text', 'id' => 'nama', 'label' => 'Nama Lengkap', 'ikon' => 'fas fa-user'])
               @email
               @password
 
-              <div class="form-group">
+              {{-- <div class="form-group">
                 <div class="custom-control custom-checkbox">
                   <input type="checkbox" name="remember" class="custom-control-input" tabindex="3" id="remember-me">
                   <label class="custom-control-label" for="remember-me">Ingat Saya</label>
                 </div>
-              </div>
+              </div> --}}
 
               <div class="form-group text-right">
-                <a href="{{ route('daftar') }}" class="btn btn-success btn-lg">Daftar</a>
+                <a href="{{ route('masuk') }}" class="btn btn-success btn-lg">Masuk</a>
                 <button type="submit" class="btn btn-primary btn-lg btn-icon icon-right" tabindex="4">
-                  Masuk
+                  Daftar
                 </button>
               </div>
             </form>
